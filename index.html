@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Dashboard · DS-LAB</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Tema dipasang di <head> agar langsung tampil tanpa kedipan -->
+    <script>
+/*
+ * DS-LAB · tema terang/gelap bersama untuk semua halaman.
+ * - Dimuat di <head> → atribut data-theme terpasang sebelum render (tanpa kedipan).
+ * - Satu kunci localStorage ("dslab-theme") dipakai semua halaman.
+ * - Selama pengguna belum memilih, tema mengikuti pengaturan sistem.
+ */
+(function () {
+  'use strict';
+
+  var KEY = 'dslab-theme';
+  var LEGACY_KEY = 'shell-theme'; // kunci lama dari DS-LAB-v3.html
+  var root = document.documentElement;
+  var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+  function readStored() {
+    try {
+      var v = localStorage.getItem(KEY) || localStorage.getItem(LEGACY_KEY);
+      return v === 'light' || v === 'dark' ? v : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function store(value) {
+    try { localStorage.setItem(KEY, value); } catch (e) { /* mode privat: abaikan */ }
+  }
+
+  function systemTheme() {
+    return mq && mq.matches ? 'dark' : 'light';
+  }
+
+  function current() {
+    return root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+  }
+
+  var button = null;
+
+  function apply(theme) {
+    root.setAttribute('data-theme', theme);
+    if (button) button.textContent = theme === 'dark' ? '☀️' : '🌙';
+  }
+
+  apply(readStored() || systemTheme());
+
+  // Ikuti perubahan tema sistem, kecuali pengguna sudah memilih sendiri.
+  if (mq) {
+    var onSystemChange = function () {
+      if (!readStored()) apply(systemTheme());
+    };
+    if (mq.addEventListener) mq.addEventListener('change', onSystemChange);
+    else if (mq.addListener) mq.addListener(onSystemChange);
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    button = document.getElementById('dslTheme');
+    if (button) {
+      apply(current());
+      button.addEventListener('click', function () {
+        var next = current() === 'dark' ? 'light' : 'dark';
+        store(next);
+        apply(next);
+      });
+    }
+  });
+})();
+
+    </script>
+</head>
+<body>
+<div class="dsh">
+    <aside class="dside">
+        <a class="dside__brand" href="#home" title="Kembali ke Dashboard">
+            <span class="dside__logo">DS</span>
+            <span><b>DS-LAB</b><small>Data Structure Lab</small></span>
+        </a>
+
+        <nav class="dside__nav" aria-label="Menu utama">
+            <a href="#home" data-route="home"><span class="dside__no">&#8962;</span>Dashboard</a>
+            <p class="dside__label">Stack</p>
+            <a href="#stack" data-route="stack"><span class="dside__no">1</span>Materi Stack</a>
+            <a href="#stack-case" data-route="stack-case"><span class="dside__no">2</span>Studi Kasus Stack</a>
+            <p class="dside__label">Queue</p>
+            <a href="#queue" data-route="queue"><span class="dside__no">3</span>Materi Queue</a>
+            <a href="#queue-case" data-route="queue-case"><span class="dside__no">4</span>Studi Kasus Queue</a>
+        </nav>
+
+        <div class="dside__promo">
+            <div class="dside__cube" aria-hidden="true"><i></i><i></i><i></i></div>
+            <p>Baru mulai belajar?</p>
+            <a href="#stack">Mulai dari Stack</a>
+        </div>
+    </aside>
+
+    <div class="dmain">
+        <div class="dtop">
+            <span class="dchip" id="dslChip">Praktikum Struktur Data</span>
+            <button type="button" class="dtheme" id="dslTheme" title="Ganti tema" aria-label="Ganti tema">🌙</button>
+        </div>
+
+<div id="page-home" data-page="home">
+<section class="dhero">
+    <div class="dhero__text">
+        <h1>Pelajari struktur data lewat simulasi interaktif</h1>
+        <p>Lihat tiap operasi berjalan langkah demi langkah, baca kodenya, lalu terapkan di studi kasus nyata. Semua berjalan offline.</p>
+
+        <div class="dhero__actions">
+            <a class="dcta" href="#topik" data-scroll="topik">
+                <span>Pilih topik</span><span class="dcta__arrow" aria-hidden="true">&#8600;</span>
+            </a>
+            <a class="dplay" href="#stack">
+                <span class="dplay__btn" aria-hidden="true">&#9654;</span>
+                <span class="dplay__txt">Coba simulasi Stack<small>langsung praktik, 1 menit</small></span>
+            </a>
+        </div>
+    </div>
+
+    <div class="dhero__art">
+        <p class="dbubble">Hai! Aku pemandu belajarmu. Yuk mulai dari Stack atau Queue.</p>
+        <svg class="dbot" viewBox="0 0 320 380" role="img" aria-label="Maskot DS-LAB">
+            <defs>
+                <linearGradient id="bHead" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a68bff"/><stop offset="1" stop-color="#5a3fd6"/></linearGradient>
+                <linearGradient id="bBody" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1edff"/><stop offset="1" stop-color="#b6abf2"/></linearGradient>
+                <linearGradient id="bVisor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a2490"/><stop offset="1" stop-color="#241265"/></linearGradient>
+                <linearGradient id="bOrange" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffbd5a"/><stop offset="1" stop-color="#f26a1b"/></linearGradient>
+                <linearGradient id="bFlame" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd36b"/><stop offset="1" stop-color="#ff6a2b" stop-opacity=".1"/></linearGradient>
+            </defs>
+            <g class="dbot__flame"><path d="M132 318 Q160 392 188 318 Z" fill="url(#bFlame)"/><path d="M147 318 Q160 360 173 318 Z" fill="#fff3c4" opacity=".85"/></g>
+            <ellipse cx="160" cy="372" rx="54" ry="7" fill="#6d4fe0" opacity=".12"/>
+            <!-- badan -->
+            <rect x="98" y="176" width="124" height="148" rx="38" fill="url(#bBody)"/>
+            <rect x="122" y="202" width="76" height="84" rx="22" fill="url(#bOrange)"/>
+            <text x="160" y="258" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="38" font-weight="800" fill="#fff">DS</text>
+            <!-- lengan -->
+            <circle cx="80" cy="236" r="22" fill="url(#bHead)"/>
+            <path d="M222 214 Q258 206 262 168" stroke="url(#bHead)" stroke-width="26" stroke-linecap="round" fill="none"/>
+            <circle cx="262" cy="160" r="23" fill="url(#bHead)"/>
+            <!-- kepala -->
+            <rect x="66" y="92" width="14" height="44" rx="7" fill="#4a2fb0"/>
+            <rect x="240" y="92" width="14" height="44" rx="7" fill="#4a2fb0"/>
+            <rect x="80" y="44" width="160" height="136" rx="48" fill="url(#bHead)"/>
+            <rect x="98" y="66" width="124" height="86" rx="36" fill="url(#bVisor)"/>
+            <path d="M124 104 q15 -18 30 0" stroke="#ffd36b" stroke-width="7" stroke-linecap="round" fill="none"/>
+            <path d="M166 104 q15 -18 30 0" stroke="#ffd36b" stroke-width="7" stroke-linecap="round" fill="none"/>
+            <path d="M136 124 q24 20 48 0" stroke="#7fe7ff" stroke-width="6" stroke-linecap="round" fill="none"/>
+            <line x1="160" y1="44" x2="160" y2="24" stroke="#5a3fd6" stroke-width="6" stroke-linecap="round"/>
+            <circle cx="160" cy="18" r="10" fill="#ffb347"/>
+        </svg>
+    </div>
+</section>
+
+<section id="topik" class="dtopics">
+    <h2>Mau belajar apa hari ini?</h2>
+    <div class="dtopics__grid">
+        <article class="tc tc--stack">
+            <div class="tc__head">
+                <span class="tc__chip">LIFO</span>
+                <div class="tc__art tc__art--stack" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            </div>
+
+            <h3>Stack <small>Last In, First Out</small></h3>
+            <p class="tc__desc">Tumpukan data: elemen terakhir yang masuk adalah yang pertama keluar. Operasi utamanya push dan pop.</p>
+
+            <dl class="tc__meta">
+                <div><dt>Materi</dt><dd>3 topik</dd></div>
+                <div><dt>Studi kasus</dt><dd>3 kasus</dd></div>
+            </dl>
+
+            <ul class="tc__pills"><li>Simulasi Stack</li><li>Representasi &amp; Operasi</li><li>Latihan Troubleshooting</li><li>Balik Kalimat</li><li>Balik Urutan Kata</li><li>Cek Palindrom</li></ul>
+
+            <div class="tc__actions">
+                <a class="tbtn tbtn--solid" href="#stack">Mulai Materi &rarr;</a>
+                <a class="tbtn" href="#stack-case">Studi Kasus</a>
+            </div>
+        </article>
+        <article class="tc tc--queue">
+            <div class="tc__head">
+                <span class="tc__chip">FIFO</span>
+                <div class="tc__art tc__art--queue" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            </div>
+
+            <h3>Queue <small>First In, First Out</small></h3>
+            <p class="tc__desc">Antrian data: elemen yang masuk lebih dulu adalah yang pertama keluar. Operasi utamanya enqueue dan dequeue.</p>
+
+            <dl class="tc__meta">
+                <div><dt>Materi</dt><dd>4 topik</dd></div>
+                <div><dt>Studi kasus</dt><dd>3 kasus</dd></div>
+            </dl>
+
+            <ul class="tc__pills"><li>Simulasi Queue</li><li>Representasi &amp; Operasi</li><li>Latihan Modul</li><li>Tugas Praktikum</li><li>Antrian Loket</li><li>Round Robin (Penjadwalan CPU)</li><li>Permainan Eliminasi (Josephus)</li></ul>
+
+            <div class="tc__actions">
+                <a class="tbtn tbtn--solid" href="#queue">Mulai Materi &rarr;</a>
+                <a class="tbtn" href="#queue-case">Studi Kasus</a>
+            </div>
+        </article>
+    </div>
+</section>
+
+<p class="dsrc">Basis: <i>Modul Praktikum Algoritma dan Struktur Data, Modul IV &mdash; Stack</i> dan <i>Modul Praktikum Struktur Data 5 &mdash; Queue</i>.</p>
+</div>
+
+<section class="pg pg-stack" id="page-stack" data-page="stack" hidden>
+<div class="app">
+<header class="top"><div><h1>Materi Stack</h1><p class="def"><b>Stack</b> (tumpukan) adalah kumpulan data yang diletakkan di atas data lain dengan konsep <b>LIFO</b> (<i>Last In, First Out</i>): elemen terakhir yang disimpan menjadi elemen pertama yang diambil. Meletakkan elemen di atas disebut <b>push</b>, mengambilnya disebut <b>pop</b>.</p><p class="src">Sumber: <i>Modul Praktikum Algoritma dan Struktur Data, Modul IV — Stack</i> (tujuan, dasar teori, operasi pada stack, latihan <i>troubleshooting</i>).</p></div></header>
+<div class="layout"><nav class="menu" id="menu"></nav><main>
+<div class="card head"><h2 id="hName"></h2><div class="sub" id="hSub"></div><p id="hDesc"></p></div>
+
+<section class="sec" id="s-sim">
+<div class="card tb"><div class="ctrl" style="margin:0"><label>Kapasitas<select id="cap"><option>3</option><option>4</option><option selected>5</option><option>6</option><option>8</option></select></label>
+<label>Data (float)<input type="number" id="val" value="7" style="width:80px"></label>
+<div class="btns" style="margin:0"><button class="b pri" id="bPush">⬇ Push</button><button class="b" id="bPop">⬆ Pop</button><button class="b" id="bPrint">🖨 Print</button><button class="b" id="bClear">🗑 Clear</button><button class="b" id="bRnd">🎲 Isi acak</button></div>
+<div class="chips"><span title="menaruh elemen di atas stack">push</span><span title="mengambil elemen teratas">pop</span><span title="penanda ujung stack">top</span><span title="push saat stack penuh">overflow</span><span title="pop saat stack kosong">underflow</span></div></div></div>
+<div class="g3">
+<section class="panel"><div class="pt">① Stack (LIFO)</div><div class="viz pscroll"><div class="vs" id="vs"></div>
+<div class="stats"><div class="stat"><b id="sTop">-1</b><span>top</span></div><div class="stat"><b id="sEmp">true</b><span>isempty()</span></div><div class="stat"><b id="sFull">false</b><span>isfull()</span></div></div></div></section>
+<section class="panel"><div class="pt" id="cTitle">② Kode C++ live · baris yang dieksekusi menyala</div><div class="code-scroll" id="cs"><div class="code" id="code"></div></div></section>
+<section class="panel"><div class="pt">③ Jejak &amp; keluaran program</div><div class="viz pscroll"><div class="vars" id="vars"></div><div class="msg" id="tmsg">Tekan <b>Push</b>, <b>Pop</b>, <b>Print</b>, atau <b>Clear</b>.</div><div class="sub2">Keluaran program</div><div class="msg out" id="msg"></div><div class="sub2 lh"><span>Log baris</span><button type="button" class="b sm2" id="bClrLog" title="Hapus semua isi log">🧹 Hapus log</button></div><div class="log" id="tlog"></div><div id="log" hidden></div></div></section>
+</div>
+</section>
+
+<section class="sec" id="s-op" hidden>
+<div class="card"><h3>Representasi: struct dengan dua field</h3><p class="tip">Stack disajikan memakai <b>array</b> dengan anggapan jumlah elemen maksimum tidak melebihi ukuran array. Agar overflow bisa dideteksi, dibutuhkan data tambahan berupa posisi ujung stack, sehingga dipakai <code>struct</code> dengan dua field: <b>array</b> untuk menyimpan elemen dan <b>integer</b> <code>top</code> untuk mencatat posisi ujung.</p>
+<pre>struct STACK {          // jenis data abstrak 'STACK'
+    int   top;          // posisi ujung stack (-1 = kosong)
+    float data[maxstack];
+};
+float dta;
+struct STACK stackbaru;</pre></div>
+<div class="card"><h3>Operasi dasar (dari modul)</h3><div class="grid2"><pre>bool isempty() {   // kosongkah?
+    if (stackbaru.top == -1) return true;
+    else return false;
+}
+
+bool isfull() {    // penuhkah?
+    if (stackbaru.top == maxstack - 1)
+        return true;
+    else return false;
+}</pre><pre>void clear() {     // hapus seluruh stack
+    stackbaru.top = -1;
+}
+
+void print() {     // cetak isi stack
+    for (int i = 0; i <= stackbaru.top; i++)
+        cout << stackbaru.data[i] << "  ";
+}</pre></div>
+<ul class="tip"><li><b>isempty</b>: stack kosong jika <code>top == -1</code>.</li><li><b>isfull</b>: stack penuh jika <code>top == maxstack - 1</code> (index terakhir array).</li><li><b>clear</b>: cukup mengembalikan <code>top</code> ke -1, data lama dianggap tidak ada.</li><li><b>print</b>: membaca dari index 0 sampai <code>top</code>.</li></ul></div>
+<div class="card"><h3>Push &amp; Pop yang benar</h3><pre>void push(float dta) {
+    if (isfull()) puts("Maaf, stack penuh");
+    else {
+        stackbaru.top++;                       // naikkan top dulu
+        stackbaru.data[stackbaru.top] = dta;   // lalu simpan
+    }
+}
+void pop() {
+    if (isempty()) cout << "Data telah kosong!";
+    else {
+        cout << "data yang terambil : " << stackbaru.data[stackbaru.top] << endl;
+        stackbaru.top--;                       // ambil dulu, lalu turunkan top
+    }
+}</pre></div>
+<div class="card"><h3>Kompleksitas</h3><div class="cx"><div><b>O(1)</b><span>push</span></div><div><b>O(1)</b><span>pop</span></div><div><b>O(1)</b><span>isempty / isfull / clear</span></div><div><b>O(n)</b><span>print</span></div></div></div>
+</section>
+
+<section class="sec" id="s-dbg" hidden>
+<div class="card"><h3>Latihan modul: Troubleshooting program STACK</h3><p class="tip">Program latihan pada modul sengaja memuat kesalahan. Berikut kesalahan yang dapat ditemukan beserta perbaikannya.</p>
+<div class="scroll"><table class="tbl"><tr><th>#</th><th>Kode salah</th><th>Masalah</th><th>Perbaikan</th></tr>
+<tr><td>1</td><td><code>float data[4]</code> dengan <code>maxstack 5</code></td><td>Ukuran array tidak sama dengan kapasitas, index 4 melampaui array.</td><td><code>float data[maxstack]</code></td></tr>
+<tr><td>2</td><td><code>top == maxstack</code> pada isfull</td><td>Index terakhir adalah <code>maxstack-1</code>, penuh terlambat terdeteksi.</td><td><code>top == maxstack - 1</code></td></tr>
+<tr><td>3</td><td><code>if (isfull() == false)</code> lalu "stack penuh"</td><td>Kondisi terbalik: pesan penuh muncul saat stack belum penuh.</td><td><code>if (isfull())</code></td></tr>
+<tr><td>4</td><td><code>data[top] = dta</code></td><td><code>top</code> tidak dikenal; ia field milik <code>stackbaru</code>.</td><td><code>stackbaru.data[stackbaru.top]</code></td></tr>
+<tr><td>5</td><td><code>if (isempty() == false)</code> lalu "Data telah kosong!"</td><td>Kondisi terbalik pada pop.</td><td><code>if (isempty())</code></td></tr>
+<tr><td>6</td><td><code>i &lt;= top</code> pada print</td><td><code>top</code> tidak dikenal.</td><td><code>i &lt;= stackbaru.top</code></td></tr>
+<tr><td>7</td><td><code>top = -1</code> pada clear</td><td><code>top</code> tidak dikenal.</td><td><code>stackbaru.top = -1</code></td></tr>
+<tr><td>8</td><td><code>inisialisasi();</code> di main</td><td>Fungsi belum didefinisikan, dan <code>top</code> belum bernilai -1.</td><td>Buat <code>void inisialisasi(){ stackbaru.top = -1; }</code></td></tr>
+<tr><td>9</td><td><code>void main()</code>, tanpa <code>&lt;cstdlib&gt;</code></td><td><code>main</code> seharusnya <code>int</code>; <code>system</code> dan <code>exit</code> butuh <code>&lt;cstdlib&gt;</code>.</td><td><code>int main()</code> + <code>#include &lt;cstdlib&gt;</code></td></tr></table></div></div>
+<div class="card"><h3>Program lengkap setelah diperbaiki (perbandingan)</h3><p class="tip">Kode lama direkonstruksi dari tabel kesalahan di atas. Klik <b>Hasil akhir saja</b> untuk melihat program yang bersih.</p><div class="dleg"><span class="a"><i></i>Ditambah / diubah (baru)</span><span class="d"><i></i>Dihapus / kode salah</span><button type="button" class="b" style="margin-left:auto" onclick="var d=document.getElementById('dfS'),f=d.classList.toggle('final');this.textContent=f?'Lihat perubahan':'Hasil akhir saja'">Hasil akhir saja</button></div><div class="diff" id="dfS"><div class="dl "><span class="sg"> </span><span>#include &lt;iostream&gt;</span></div><div class="dl add"><span class="sg">+</span><span>#include &lt;cstdlib&gt;</span></div><div class="dl "><span class="sg"> </span><span>#define maxstack 5</span></div><div class="dl "><span class="sg"> </span><span>using namespace std;</span></div><div class="dl "><span class="sg"> </span><span>&nbsp;</span></div><div class="dl del"><span class="sg">−</span><span>struct STACK { int top; float data[4]; };</span></div><div class="dl add"><span class="sg">+</span><span>struct STACK { int top; float data[maxstack]; };</span></div><div class="dl "><span class="sg"> </span><span>float dta;</span></div><div class="dl "><span class="sg"> </span><span>STACK stackbaru;</span></div><div class="dl "><span class="sg"> </span><span>&nbsp;</span></div><div class="dl del"><span class="sg">−</span><span>bool isfull()  { return stackbaru.top == maxstack; }</span></div><div class="dl add"><span class="sg">+</span><span>void inisialisasi() { stackbaru.top = -1; }</span></div><div class="dl add"><span class="sg">+</span><span>bool isfull()  { return stackbaru.top == maxstack - 1; }</span></div><div class="dl "><span class="sg"> </span><span>bool isempty() { return stackbaru.top == -1; }</span></div><div class="dl "><span class="sg"> </span><span>&nbsp;</span></div><div class="dl "><span class="sg"> </span><span>void push(float dta) {</span></div><div class="dl del"><span class="sg">−</span><span>    if (isfull() == false) puts(&quot;Maaf, stack penuh&quot;);</span></div><div class="dl del"><span class="sg">−</span><span>    else { stackbaru.top++; data[top] = dta; }</span></div><div class="dl add"><span class="sg">+</span><span>    if (isfull()) puts(&quot;Maaf, stack penuh&quot;);</span></div><div class="dl add"><span class="sg">+</span><span>    else { stackbaru.top++; stackbaru.data[stackbaru.top] = dta; }</span></div><div class="dl "><span class="sg"> </span><span>}</span></div><div class="dl "><span class="sg"> </span><span>void pop() {</span></div><div class="dl del"><span class="sg">−</span><span>    if (isempty() == false) cout &lt;&lt; &quot;Data telah kosong!&quot;;</span></div><div class="dl add"><span class="sg">+</span><span>    if (isempty()) cout &lt;&lt; &quot;Data telah kosong!&quot;;</span></div><div class="dl "><span class="sg"> </span><span>    else {</span></div><div class="dl "><span class="sg"> </span><span>        cout &lt;&lt; &quot;data yang terambil : &quot; &lt;&lt; stackbaru.data[stackbaru.top] &lt;&lt; endl;</span></div><div class="dl "><span class="sg"> </span><span>        stackbaru.top--;</span></div><div class="dl "><span class="sg"> </span><span>    }</span></div><div class="dl "><span class="sg"> </span><span>}</span></div><div class="dl del"><span class="sg">−</span><span>void print() { for (int i = 0; i &lt;= top; i++) cout &lt;&lt; stackbaru.data[i] &lt;&lt; &quot;  &quot;; }</span></div><div class="dl del"><span class="sg">−</span><span>void clear() { top = -1; }</span></div><div class="dl add"><span class="sg">+</span><span>void print() { for (int i = 0; i &lt;= stackbaru.top; i++) cout &lt;&lt; stackbaru.data[i] &lt;&lt; &quot;  &quot;; }</span></div><div class="dl add"><span class="sg">+</span><span>void clear() { stackbaru.top = -1; }</span></div><div class="dl "><span class="sg"> </span><span>&nbsp;</span></div><div class="dl del"><span class="sg">−</span><span>void main() {</span></div><div class="dl add"><span class="sg">+</span><span>int main() {</span></div><div class="dl "><span class="sg"> </span><span>    inisialisasi();</span></div><div class="dl "><span class="sg"> </span><span>    char menu, uulang;</span></div><div class="dl "><span class="sg"> </span><span>    do {</span></div><div class="dl "><span class="sg"> </span><span>        system(&quot;cls&quot;);</span></div><div class="dl "><span class="sg"> </span><span>        puts(&quot;Menu:\n1. pop stack\n2. push stack\n3. Cetak\n4. Bersihkan stack\n5. Exit&quot;);</span></div><div class="dl "><span class="sg"> </span><span>        cout &lt;&lt; &quot;Menu pilihan Anda: &quot;; cin &gt;&gt; menu;</span></div><div class="dl "><span class="sg"> </span><span>        if (menu == &#x27;1&#x27;)      { pop(); uulang = &#x27;y&#x27;; }</span></div><div class="dl "><span class="sg"> </span><span>        else if (menu == &#x27;2&#x27;) { cout &lt;&lt; &quot;data yang akan disimpan di stack: &quot;; cin &gt;&gt; dta; push(dta); uulang = &#x27;y&#x27;; }</span></div><div class="dl "><span class="sg"> </span><span>        else if (menu == &#x27;3&#x27;) { print(); cout &lt;&lt; &quot;Ulang? (y/t)&quot;; cin &gt;&gt; uulang; }</span></div><div class="dl "><span class="sg"> </span><span>        else if (menu == &#x27;4&#x27;) { clear(); cout &lt;&lt; &quot;Ulang? (y/t)&quot;; cin &gt;&gt; uulang; }</span></div><div class="dl "><span class="sg"> </span><span>        else if (menu == &#x27;5&#x27;) exit(0);</span></div><div class="dl "><span class="sg"> </span><span>    } while (uulang == &#x27;Y&#x27; || uulang == &#x27;y&#x27;);</span></div><div class="dl add"><span class="sg">+</span><span>    return 0;</span></div><div class="dl "><span class="sg"> </span><span>}</span></div></div></div>
+</section>
+</main></div></div>
+</section>
+
+<section class="pg pg-stack-case" id="page-stack-case" data-page="stack-case" hidden>
+<div class="app">
+<header class="top"><div><h1>Studi Kasus Stack</h1><p>Pembalikan kalimat memakai stack: push setiap elemen, lalu pop satu per satu. Karena LIFO, urutannya otomatis terbalik.</p><p class="src">Basis: <i>Modul Praktikum Algoritma dan Struktur Data, Modul IV — Stack</i>, bagian Tugas (contoh “Struktur Data” menjadi “ataD rutkurtS”).</p></div></header>
+<div class="layout"><nav class="menu" id="menu"></nav><main>
+<div class="card head"><h2 id="hName"></h2><div class="sub" id="hSub"></div><p id="hDesc"></p></div>
+<div class="card"><div class="ctrl"><label>Kalimat (maks. 24 karakter)<input type="text" id="inp" maxlength="24" style="width:min(300px,100%)"></label></div>
+<div class="btns"><button class="b pri" id="run">▶ Mulai</button><button class="b" id="prev">◀ Mundur</button><button class="b" id="next">Langkah ▶</button><button class="b" id="rst">↺ Reset</button><label class="ctrl" style="margin:0"><span style="font-size:11.5px;color:var(--muted);font-weight:600">Kecepatan</span><input type="range" id="spd" min="120" max="1200" value="500" style="direction:rtl"></label></div></div>
+<div class="panels"><section class="panel"><div class="pt">Kode C++ · baris yang sedang berjalan menyala</div><div class="code-scroll" id="cs"><div class="code" id="code"></div></div></section>
+<section class="panel"><div class="pt">Visualisasi</div><div class="viz"><div class="sub2">Stack (atas = top)</div><div class="vs h" id="vs"></div><div class="sub2">Hasil</div><div class="outb" id="outb"></div><div class="msg" id="msg"></div><div class="sub2">Variabel</div><div class="vars" id="vars"></div>
+<div class="stats"><div class="stat"><b id="sStep">0</b><span>Langkah</span></div><div class="stat"><b id="sPush">0</b><span>Push</span></div><div class="stat"><b id="sPop">0</b><span>Pop</span></div><div class="stat"><b id="sRes">—</b><span>Hasil</span></div></div></div></section></div>
+<div class="card"><h3>Mengapa stack cocok?</h3><p class="tip">Push memasukkan karakter dari kiri ke kanan; pop mengeluarkannya dari yang terakhir masuk. Urutan keluar adalah kebalikan urutan masuk (LIFO). Waktu <b>O(n)</b> (n kali push, n kali pop) dan memori tambahan <b>O(n)</b> untuk stack.</p></div>
+</main></div></div>
+</section>
+
+<section class="pg pg-queue" id="page-queue" data-page="queue" hidden>
+<div class="app">
+<header class="top"><div><h1>Materi Queue</h1><p class="def"><b>Queue</b> (antrian) adalah kumpulan data yang penambahan elemennya hanya dilakukan pada satu ujung (<b>rear</b>/belakang), sedangkan pengambilan atau penghapusan dilakukan pada ujung lain (<b>front</b>/depan), dengan prinsip <b>FIFO</b> (<i>First In, First Out</i>). Menambah elemen disebut <b>enqueue</b>, mengambilnya <b>dequeue</b>.</p><p class="src">Sumber: <i>Modul Praktikum Struktur Data 5 — Queue</i> (tujuan, dasar teori, implementasi array dan pointer, latihan, tugas).</p></div></header>
+<div class="layout"><nav class="menu" id="menu"></nav><main>
+<div class="card head"><h2 id="hName"></h2><div class="sub" id="hSub"></div><p id="hDesc"></p></div>
+
+<section class="sec" id="s-sim">
+<div class="card tb"><div class="ctrl" style="margin:0"><label>Kapasitas (MAXN)<select id="cap"><option>3</option><option>4</option><option selected>5</option><option>6</option><option>8</option></select></label>
+<label>Data (string)<input type="text" id="val" value="Andi" style="width:110px"></label>
+<div class="btns" style="margin:0"><button class="b pri" id="bEn">⬇ Enqueue</button><button class="b" id="bDe">⬆ Dequeue</button><button class="b" id="bPrint">🖨 Print</button><button class="b" id="bClear">🗑 Clear</button><button class="b" id="bRnd">🎲 Isi acak</button></div>
+<div class="chips"><span title="menambah elemen di belakang">enqueue</span><span title="mengambil elemen di depan">dequeue</span><span title="penanda elemen depan">first</span><span title="penanda elemen belakang">last</span><span title="enqueue saat queue penuh">overflow</span><span title="dequeue saat queue kosong">underflow</span></div></div></div>
+<div class="g3">
+<section class="panel"><div class="pt">① Queue (FIFO) · array melingkar</div><div class="viz pscroll"><div class="fl">dequeue ◀ depan … belakang ◀ enqueue</div><div class="row" id="row"></div>
+<div class="stats"><div class="stat"><b id="sF">0</b><span>first</span></div><div class="stat"><b id="sL">-1</b><span>last</span></div><div class="stat"><b id="sN">0</b><span>number_of_items</span></div><div class="stat"><b id="sEmp">true</b><span>kosong?</span></div><div class="stat"><b id="sFull">false</b><span>penuh?</span></div></div></div></section>
+<section class="panel"><div class="pt">② Kode C++ live · baris yang dieksekusi menyala</div><div class="code-scroll" id="cs"><div class="code" id="code"></div></div></section>
+<section class="panel"><div class="pt">③ Jejak &amp; keluaran program</div><div class="viz pscroll"><div class="vars" id="vars"></div><div class="msg" id="tmsg">Tekan <b>Enqueue</b>, <b>Dequeue</b>, <b>Print</b>, atau <b>Clear</b>.</div><div class="sub2">Keluaran program</div><div class="msg out" id="msg"></div><div class="sub2 lh"><span>Log baris</span><button type="button" class="b sm2" id="bClrLog" title="Hapus semua isi log">🧹 Hapus log</button></div><div class="log" id="tlog"></div></div></section>
+</div></section>
+
+<section class="sec" id="s-op" hidden>
+<div class="card"><h3>Perbandingan Stack dan Queue</h3><div class="scroll"><table class="tbl"><tr><th></th><th>Stack</th><th>Queue</th></tr><tr><td>Prinsip</td><td>LIFO</td><td>FIFO</td></tr><tr><td>Menambah</td><td>push (di atas)</td><td>enqueue (di belakang)</td></tr><tr><td>Mengambil</td><td>pop (dari atas)</td><td>dequeue (dari depan)</td></tr><tr><td>Penanda</td><td>top</td><td>first dan last</td></tr></table></div></div>
+<div class="card"><h3>Implementasi dengan array: struct</h3><p class="tip">Queue disimpan dalam <code>struct</code> berisi array elemen, penanda <code>first</code> (depan), <code>last</code> (belakang), dan <code>number_of_items</code>. Catatan: modul tidak menuliskan <code>typedef int Titem</code>, tetapi tipe ini perlu ada agar program dapat dikompilasi.</p><pre>#define MAXN 6
+typedef int Titem;
+typedef enum {NOT_OK, OK} Tboolean;
+typedef struct {
+    Titem array[MAXN];
+    int first;            // posisi elemen pertama (depan)
+    int last;             // posisi elemen terakhir (belakang)
+    int number_of_items;  // jumlah elemen saat ini
+} Tqueue;</pre></div>
+<div class="card"><h3>Enqueue &amp; dequeue (array melingkar)</h3><p class="tip">Awalnya <code>first = 0</code>, <code>last = -1</code>, <code>number_of_items = 0</code>. Saat <code>last</code> atau <code>first</code> melewati index terakhir, keduanya kembali ke 0 (<i>wrap</i>), sehingga slot kosong di depan dapat dipakai lagi. Penuh atau kosong ditentukan oleh <code>number_of_items</code>, bukan oleh posisi <code>first</code>/<code>last</code>.</p><div class="grid2"><pre>bool enqueue(Tqueue *Pqueue, Titem item) {
+  if (Pqueue-&gt;number_of_items &gt;= MAXN)
+    return NOT_OK;          // penuh
+  else {
+    Pqueue-&gt;last++;
+    if (Pqueue-&gt;last &gt; MAXN-1)
+      Pqueue-&gt;last = 0;     // wrap
+    Pqueue-&gt;array[Pqueue-&gt;last] = item;
+    Pqueue-&gt;number_of_items++;
+    return OK;
+  }
+}</pre><pre>bool dequeue(Tqueue *Pqueue, Titem *Pitem) {
+  if (Pqueue-&gt;number_of_items == 0)
+    return NOT_OK;          // kosong
+  else {
+    *Pitem = Pqueue-&gt;array[Pqueue-&gt;first++];
+    if (Pqueue-&gt;first &gt; MAXN-1)
+      Pqueue-&gt;first = 0;    // wrap
+    Pqueue-&gt;number_of_items--;
+    return OK;
+  }
+}</pre></div></div>
+<div class="card"><h3>Implementasi dengan pointer (linked list)</h3><p class="tip">Setiap elemen adalah node dengan <code>nextPtr</code>. <code>headPtr</code> menunjuk elemen depan, <code>tailPtr</code> elemen belakang. Enqueue menyambung node baru di belakang; dequeue mengambil node di depan. Kapasitas tidak dibatasi array.</p><pre>struct queueNode { char data; struct queueNode *nextPtr; };
+typedef struct queueNode QUEUENODE;
+typedef QUEUENODE *QUEUENODEPTR;
+QUEUENODEPTR headPtr = NULL, tailPtr = NULL;
+
+int isEmpty(QUEUENODEPTR headPtr) { return headPtr == NULL; }
+
+void enqueue(QUEUENODEPTR *headPtr, QUEUENODEPTR *tailPtr, char value) {
+    QUEUENODEPTR newPtr = malloc(sizeof(QUEUENODE));
+    if (newPtr != NULL) {
+        newPtr-&gt;data = value;
+        newPtr-&gt;nextPtr = NULL;
+        if (isEmpty(*headPtr)) *headPtr = newPtr;   // queue masih kosong
+        else (*tailPtr)-&gt;nextPtr = newPtr;          // sambung di belakang
+        *tailPtr = newPtr;
+    }
+}
+// dequeue (pelengkap): ambil dari depan
+char dequeue(QUEUENODEPTR *headPtr, QUEUENODEPTR *tailPtr) {
+    QUEUENODEPTR tempPtr = *headPtr;
+    char value = (*headPtr)-&gt;data;
+    *headPtr = (*headPtr)-&gt;nextPtr;
+    if (*headPtr == NULL) *tailPtr = NULL;   // queue jadi kosong
+    free(tempPtr);
+    return value;
+}</pre></div>
+<div class="card"><h3>Kompleksitas</h3><div class="cx"><div><b>O(1)</b><span>enqueue</span></div><div><b>O(1)</b><span>dequeue</span></div><div><b>O(1)</b><span>isEmpty / isfull / clear</span></div><div><b>O(n)</b><span>print</span></div></div></div>
+</section>
+
+<section class="sec" id="s-dbg" hidden>
+<div class="card"><h3>Latihan modul: queue linear dengan insert dan del</h3><p class="tip">Latihan pertama memakai array biasa dengan <code>front = rear = -1</code>. <code>rear</code> naik tiap insert, <code>front</code> naik tiap delete, dan queue kosong bila <code>front == rear</code>. Kelemahannya: <code>front</code> dan <code>rear</code> tidak pernah kembali, sehingga setelah MAX insert queue dianggap penuh walau semua elemen sudah dihapus. Masalah ini diselesaikan oleh array melingkar pada tab Simulasi.</p><pre>void insert(int queue[], int *rear, int nilai) {
+    if (*rear &lt; MAX-1) { *rear = *rear + 1; queue[*rear] = nilai; }
+    else { cout &lt;&lt; &quot;queue penuh, insert tidak dapat dilakukan&quot; &lt;&lt; endl; exit(0); }
+}
+void del(int queue[], int *front, int rear, int *nilai) {
+    if (*front == rear) { cout &lt;&lt; &quot;queue kosong, delete tidak dapat dilakukan&quot; &lt;&lt; endl; exit(0); }
+    *front = *front + 1;          // front menunjuk satu posisi sebelum elemen depan
+    *nilai = queue[*front];
+}
+// main: front = rear = -1  (kosong jika front == rear)</pre></div>
+<div class="card"><h3>Latihan modul: Troubleshooting Queue dengan linked list (class)</h3><p class="tip">Program pada bagian Tugas Praktikum memuat beberapa kesalahan. Berikut yang dapat ditemukan beserta perbaikannya.</p>
+<div class="scroll"><table class="tbl"><tr><th>#</th><th>Kode salah</th><th>Masalah</th><th>Perbaikan</th></tr><tr><td>1</td><td><code>tail=1;</code> di constructor</td><td><code>tail</code> adalah pointer, bukan integer; tidak bisa diberi 1.</td><td><code>tail = NULL;</code></td></tr><tr><td>2</td><td><code>if(tail==1)</code> di Insert</td><td>Membandingkan pointer dengan 1. Kosong tidaknya queue cukup dilihat dari <code>head</code>.</td><td><code>if (head == NULL)</code></td></tr><tr><td>3</td><td><code>entry*data=num;</code></td><td>Operator <code>*</code> (kali), bukan akses anggota.</td><td><code>entry-&gt;data = num;</code></td></tr><tr><td>4</td><td><code>kuebaru*temp;</code></td><td><code>kuebaru</code> adalah nama field, bukan tipe.</td><td><code>kue *temp;</code></td></tr><tr><td>5</td><td>Delete tidak mereset <code>tail</code></td><td>Setelah elemen terakhir dihapus, <code>tail</code> menunjuk node yang sudah dibebaskan (dangling).</td><td><code>if (head == NULL) tail = NULL;</code></td></tr><tr><td>6</td><td><code>while(print=NULL)</code></td><td>Tanda <code>=</code> adalah assignment: print jadi NULL dan loop tidak pernah jalan.</td><td><code>while (print != NULL)</code></td></tr><tr><td>7</td><td>if/else pada <code>cetak()</code> tanpa kurung</td><td>Hanya satu baris yang masuk else; loop <code>while</code> selalu dijalankan.</td><td>Bungkus <code>cout</code> dan loop dalam <code>if (print != NULL) { ... }</code></td></tr><tr><td>8</td><td><code>while(0)</code> + <code>goto Input</code> di menu</td><td>Do-while hanya berjalan sekali, sehingga menu tidak berulang.</td><td><code>while (1)</code> (keluar lewat <code>break</code>), hapus <code>goto</code> dan label <code>Input</code></td></tr><tr><td>9</td><td><code>&lt;iostream.h&gt;</code>, <code>return 1</code></td><td>Header lama non-standar; return 1 menandakan program gagal.</td><td><code>&lt;iostream&gt;</code> + <code>using namespace std;</code>, <code>return 0;</code></td></tr></table></div></div>
+<div class="card"><h3>Program lengkap setelah diperbaiki (perbandingan)</h3><p class="tip">Kode lama diambil dari program pada bagian Tugas Praktikum modul. Klik <b>Hasil akhir saja</b> untuk melihat program yang bersih.</p><div class="dleg"><span class="a"><i></i>Ditambah / diubah (baru)</span><span class="d"><i></i>Dihapus / kode salah</span><button type="button" class="b" style="margin-left:auto" onclick="var d=document.getElementById('dfQ'),f=d.classList.toggle('final');this.textContent=f?'Lihat perubahan':'Hasil akhir saja'">Hasil akhir saja</button></div><div class="diff" id="dfQ"><div class="dl del"><span class="sg">−</span><span>#include&lt;iostream.h&gt;</span></div><div class="dl add"><span class="sg">+</span><span>#include&lt;iostream&gt;</span></div><div class="dl "><span class="sg"> </span><span>#include&lt;conio.h&gt;</span></div><div class="dl add"><span class="sg">+</span><span>using namespace std;</span></div><div class="dl "><span class="sg"> </span><span>&nbsp;</span></div><div class="dl "><span class="sg"> </span><span>class Queue</span></div><div class="dl "><span class="sg"> </span><span>{</span></div><div class="dl "><span class="sg"> </span><span>private:</span></div><div class="dl "><span class="sg"> </span><span> struct kue</span></div><div class="dl "><span class="sg"> </span><span> {</span></div><div class="dl "><span class="sg"> </span><span>  int data;</span></div><div class="dl "><span class="sg"> </span><span>  kue*kuebaru;</span></div><div class="dl "><span class="sg"> </span><span> };</span></div><div class="dl "><span class="sg"> </span><span> kue*tail;</span></div><div class="dl "><span class="sg"> </span><span> kue*entry;</span></div><div class="dl "><span class="sg"> </span><span> kue*print;</span></div><div class="dl "><span class="sg"> </span><span> kue*head;</span></div><div class="dl "><span class="sg"> </span><span>&nbsp;</span></div><div class="dl "><span class="sg"> </span><span>public:</span></div><div class="dl "><span class="sg"> </span><span> Queue();</span></div><div class="dl "><span class="sg"> </span><span> void Delete();</span></div><div class="dl "><span class="sg"> </span><span> void Insert();</span></div><div class="dl "><span class="sg"> </span><span> void cetak();</span></div><div class="dl "><span class="sg"> </span><span> void menu();</span></div><div class="dl "><span class="sg"> </span><span>};</span></div><div class="dl "><span class="sg"> </span><span>&nbsp;</span></div><div class="dl "><span class="sg"> </span><span>Queue::Queue()</span></div><div class="dl "><span class="sg"> </span><span>{</span></div><div class="dl del"><span class="sg">−</span><span> tail=1;</span></div><div class="dl add"><span class="sg">+</span><span> tail=NULL;</span></div><div class="dl "><span class="sg"> </span><span> head=NULL;</span></div><div class="dl "><span class="sg"> </span><span>}</span></div><div class="dl "><span class="sg"> </span><span>&nbsp;</span></div><div class="dl "><span class="sg"> </span><span>void Queue::Insert()</span></div><div class="dl "><span class="sg"> </span><span>{</span></div><div class="dl "><span class="sg"> </span><span> int num;</span></div><div class="dl "><span class="sg"> </span><span> cout&lt;&lt;&quot;\n\n\n\n\n\t Masukkan data dalam Queue:&quot;;</span></div><div class="dl "><span class="sg"> </span><span> cin&gt;&gt;num;</span></div><div class="dl "><span class="sg"> </span><span> entry=new kue;</span></div><div class="dl del"><span class="sg">−</span><span> if(tail==1)</span></div><div class="dl add"><span class="sg">+</span><span> if(head==NULL)</span></div><div class="dl "><span class="sg"> </span><span> {</span></div><div class="dl "><span class="sg"> </span><span>  entry-&gt;data=num;</span></div><div class="dl "><span class="sg"> </span><span>  entry-&gt;kuebaru=NULL;</span></div><div class="dl "><span class="sg"> </span><span>  tail=entry;</span></div><div class="dl "><span class="sg"> </span><span>  head=tail;</span></div><div class="dl "><span class="sg"> </span><span> }</span></div><div class="dl "><span class="sg"> </span><span> else</span></div><div class="dl "><span class="sg"> </span><span> {</span></div><div class="dl del"><span class="sg">−</span><span>  entry*data=num;</span></div><div class="dl add"><span class="sg">+</span><span>  entry-&gt;data=num;</span></div><div class="dl "><span class="sg"> </span><span>  entry-&gt;kuebaru=NULL;</span></div><div class="dl "><span class="sg"> </span><span>  tail-&gt;kuebaru=entry;</span></div><div class="dl "><span class="sg"> </span><span>  tail=entry;</span></div><div class="dl "><span class="sg"> </span><span> }</span></div><div class="dl "><span class="sg"> </span><span> cout&lt;&lt;&quot;\n\n\t***&quot;&lt;&lt;num&lt;&lt;&quot;sudah masuk dalam Queue.&quot;&lt;&lt;endl;</span></div><div class="dl "><span class="sg"> </span><span> getch();</span></div><div class="dl "><span class="sg"> </span><span>}</span></div><div class="dl "><span class="sg"> </span><span>&nbsp;</span></div><div class="dl "><span class="sg"> </span><span>void Queue::Delete()</span></div><div class="dl "><span class="sg"> </span><span>{</span></div><div class="dl "><span class="sg"> </span><span> if(head==NULL)</span></div><div class="dl "><span class="sg"> </span><span>  cout&lt;&lt;&quot;\n\n\n\t***Error:Queue is empty.\n&quot;&lt;&lt;endl;</span></div><div class="dl "><span class="sg"> </span><span> else</span></div><div class="dl "><span class="sg"> </span><span> {</span></div><div class="dl "><span class="sg"> </span><span>  int deleted_element=head-&gt;data;</span></div><div class="dl del"><span class="sg">−</span><span>  kuebaru*temp;</span></div><div class="dl add"><span class="sg">+</span><span>  kue*temp;</span></div><div class="dl "><span class="sg"> </span><span>  temp=head;</span></div><div class="dl "><span class="sg"> </span><span>  head=head-&gt;kuebaru;</span></div><div class="dl add"><span class="sg">+</span><span>  if(head==NULL)</span></div><div class="dl add"><span class="sg">+</span><span>   tail=NULL;</span></div><div class="dl "><span class="sg"> </span><span>  delete temp;</span></div><div class="dl "><span class="sg"> </span><span>  cout&lt;&lt;&quot;\n\n\n\t***&quot;&lt;&lt;deleted_element&lt;&lt;&quot;dihapus dari queue.&quot;&lt;&lt;endl;</span></div><div class="dl "><span class="sg"> </span><span> }</span></div><div class="dl "><span class="sg"> </span><span> cout&lt;&lt;&quot;\n\n\n\t\t press any key to return to menu&quot;;</span></div><div class="dl "><span class="sg"> </span><span> getch();</span></div><div class="dl "><span class="sg"> </span><span>}</span></div><div class="dl "><span class="sg"> </span><span>&nbsp;</span></div><div class="dl "><span class="sg"> </span><span>void Queue::cetak()</span></div><div class="dl "><span class="sg"> </span><span>{</span></div><div class="dl "><span class="sg"> </span><span> print=head;</span></div><div class="dl "><span class="sg"> </span><span> if(print!=NULL)</span></div><div class="dl add"><span class="sg">+</span><span> {</span></div><div class="dl "><span class="sg"> </span><span>  cout&lt;&lt;&quot;\n\n\n\n\t angka-angka yang ada di dalam queue adalah:\n&quot;&lt;&lt;endl;</span></div><div class="dl add"><span class="sg">+</span><span>  while(print!=NULL)</span></div><div class="dl add"><span class="sg">+</span><span>  {</span></div><div class="dl add"><span class="sg">+</span><span>   cout&lt;&lt;&quot;\t&quot;&lt;&lt;print-&gt;data&lt;&lt;endl;</span></div><div class="dl add"><span class="sg">+</span><span>   print=print-&gt;kuebaru;</span></div><div class="dl add"><span class="sg">+</span><span>  }</span></div><div class="dl add"><span class="sg">+</span><span> }</span></div><div class="dl "><span class="sg"> </span><span> else</span></div><div class="dl "><span class="sg"> </span><span>  cout&lt;&lt;&quot;\n\n\n\n\t***tidak ada yang ditampilkan&quot;&lt;&lt;endl;</span></div><div class="dl del"><span class="sg">−</span><span>  while(print=NULL)</span></div><div class="dl del"><span class="sg">−</span><span>  {</span></div><div class="dl del"><span class="sg">−</span><span>  cout&lt;&lt;&quot;\t&quot;&lt;&lt;print-&gt;data&lt;&lt;endl;</span></div><div class="dl del"><span class="sg">−</span><span>  print=print-&gt;kuebaru;</span></div><div class="dl del"><span class="sg">−</span><span>  }</span></div><div class="dl "><span class="sg"> </span><span> cout&lt;&lt;&quot;\n\n\n\t\t press any key to return to menu.&quot;;</span></div><div class="dl "><span class="sg"> </span><span> getch();</span></div><div class="dl "><span class="sg"> </span><span>}</span></div><div class="dl "><span class="sg"> </span><span>&nbsp;</span></div><div class="dl "><span class="sg"> </span><span>void Queue::menu()</span></div><div class="dl "><span class="sg"> </span><span>{</span></div><div class="dl "><span class="sg"> </span><span> char Key = NULL;</span></div><div class="dl "><span class="sg"> </span><span> do</span></div><div class="dl "><span class="sg"> </span><span> {</span></div><div class="dl "><span class="sg"> </span><span>  cout&lt;&lt;&quot;**Implementasikan Queue**&quot;&lt;&lt;endl;</span></div><div class="dl "><span class="sg"> </span><span>  cout&lt;&lt;&quot;pilih salah satu menu:&quot;&lt;&lt;endl;</span></div><div class="dl "><span class="sg"> </span><span>  cout&lt;&lt;&quot;Tekan&#x27;I&#x27; to Masukkan data dalam Queue&quot;&lt;&lt;endl;</span></div><div class="dl "><span class="sg"> </span><span>  cout&lt;&lt;&quot;Tekan&#x27;D&#x27; to hapus data dari Queue&quot;&lt;&lt;endl;</span></div><div class="dl "><span class="sg"> </span><span>  cout&lt;&lt;&quot;Tekan&#x27;P&#x27; to Tampilkan data dari Queue&quot;&lt;&lt;endl;</span></div><div class="dl "><span class="sg"> </span><span>  cout&lt;&lt;&quot;Tekan&#x27;E&#x27; to Exit&quot;&lt;&lt;endl;</span></div><div class="dl del"><span class="sg">−</span><span>  Input:</span></div><div class="dl "><span class="sg"> </span><span>  cout&lt;&lt;&quot;Masukkan pilihan:&quot;;</span></div><div class="dl "><span class="sg"> </span><span>  Key = getche();</span></div><div class="dl "><span class="sg"> </span><span>  if(Key==&#x27;e&#x27;||Key==&#x27;e&#x27;||Key==&#x27;E&#x27;)</span></div><div class="dl "><span class="sg"> </span><span>   break;</span></div><div class="dl "><span class="sg"> </span><span>  else if(Key==&#x27;i&#x27;||Key==&#x27;I&#x27;)</span></div><div class="dl "><span class="sg"> </span><span>   Insert();</span></div><div class="dl "><span class="sg"> </span><span>  else if(Key==&#x27;d&#x27;||Key==&#x27;D&#x27;)</span></div><div class="dl "><span class="sg"> </span><span>   Delete();</span></div><div class="dl "><span class="sg"> </span><span>  else if(Key==&#x27;p&#x27;||Key==&#x27;P&#x27;)</span></div><div class="dl "><span class="sg"> </span><span>   cetak();</span></div><div class="dl del"><span class="sg">−</span><span>  else</span></div><div class="dl del"><span class="sg">−</span><span>   goto Input;</span></div><div class="dl "><span class="sg"> </span><span> }</span></div><div class="dl del"><span class="sg">−</span><span> while(0);</span></div><div class="dl add"><span class="sg">+</span><span> while(1);</span></div><div class="dl "><span class="sg"> </span><span>}</span></div><div class="dl "><span class="sg"> </span><span>&nbsp;</span></div><div class="dl "><span class="sg"> </span><span>int main()</span></div><div class="dl "><span class="sg"> </span><span>{</span></div><div class="dl "><span class="sg"> </span><span> Queue obj;</span></div><div class="dl "><span class="sg"> </span><span> obj.menu();</span></div><div class="dl del"><span class="sg">−</span><span> return 1;</span></div><div class="dl add"><span class="sg">+</span><span> return 0;</span></div><div class="dl "><span class="sg"> </span><span>}</span></div></div></div>
+</section>
+
+<section class="sec" id="s-tgs" hidden>
+<div class="card"><h3>Tugas</h3><p class="tip">Buat sebuah program untuk <b>memasukkan</b>, <b>menghapus</b>, dan <b>mencetak</b> suatu antrian data yang berupa <b>string</b>.</p>
+<ul class="tip"><li>Gunakan program latihan yang sudah diperbaiki sebagai kerangka, lalu ubah tipe data <code>int data</code> menjadi string (<code>string</code> dari <code>&lt;string&gt;</code>, atau <code>char[]</code>).</li><li>Insert membaca string dengan <code>cin &gt;&gt;</code> (atau <code>getline</code> bila memuat spasi).</li><li>Delete menampilkan string yang dihapus dan menangani queue kosong.</li><li>Cetak menampilkan seluruh isi dari depan ke belakang.</li><li>Coba urutan masuk dan keluar di tab Simulasi (kolom data sudah berupa string) untuk memastikan hasilnya FIFO.</li></ul></div>
+</section>
+</main></div></div>
+</section>
+
+<section class="pg pg-queue-case" id="page-queue-case" data-page="queue-case" hidden>
+<div class="app">
+<header class="top"><div><h1>Studi Kasus Queue</h1><p>Kasus nyata yang memakai antrian: urutan layanan, penjadwalan proses, dan permainan eliminasi. Elemen yang masuk lebih dulu selalu keluar lebih dulu (FIFO), berbeda dengan stack yang membalik urutan.</p><p class="src">Basis: <i>Modul Praktikum Struktur Data 5 — Queue</i>, bagian Tugas (antrian data string) dan operasi enqueue/dequeue.</p></div></header>
+<div class="layout"><nav class="menu" id="menu"></nav><main>
+<div class="card head"><h2 id="hName"></h2><div class="sub" id="hSub"></div><p id="hDesc"></p></div>
+<div class="card"><div class="ctrl"><label id="inL">Data<input type="text" id="inp" maxlength="60" style="width:min(320px,100%)"></label><label id="numW"><span id="numL">Nilai</span><input type="number" id="num" min="1" max="9" value="2"></label></div>
+<div class="btns"><button class="b pri" id="run">▶ Mulai</button><button class="b" id="prev">◀ Mundur</button><button class="b" id="next">Langkah ▶</button><button class="b" id="rst">↺ Reset</button><label class="ctrl" style="margin:0"><span style="font-size:11.5px;color:var(--muted);font-weight:600">Kecepatan</span><input type="range" id="spd" min="120" max="1200" value="500" style="direction:rtl"></label></div></div>
+<div class="panels"><section class="panel"><div class="pt">Kode C++ · baris yang sedang berjalan menyala</div><div class="code-scroll" id="cs"><div class="code" id="code"></div></div></section>
+<section class="panel"><div class="pt">Visualisasi</div><div class="viz"><div class="sub2">Queue (depan di kiri, belakang di kanan)</div><div class="qrow" id="vs"></div><div class="sub2" id="oL">Keluaran</div><div class="outb" id="outb"></div><div class="msg" id="msg"></div><div class="sub2">Variabel</div><div class="vars" id="vars"></div>
+<div class="stats"><div class="stat"><b id="sStep">0</b><span>Langkah</span></div><div class="stat"><b id="sEn">0</b><span>Enqueue</span></div><div class="stat"><b id="sDe">0</b><span>Dequeue</span></div><div class="stat"><b id="sRes">—</b><span>Status</span></div></div></div></section></div>
+<div class="card"><h3 id="whyT">Mengapa queue cocok?</h3><p class="tip" id="why"></p></div>
+</main></div></div>
+</section>
+
+    </div><!-- /.dmain -->
+</div><!-- /.dsh -->
+
+<script>
+
+/* "document" khusus per halaman: ID yang sama di tiap halaman (menu, vs, msg, ...) dicari hanya di dalam halamannya. */
+function scopedDoc(root) {
+  return new Proxy(document, {
+    get: function (t, k) {
+      if (k === "getElementById") return function (id) { return root.querySelector("#" + id); };
+      if (k === "querySelector") return function (s) { return root.querySelector(s); };
+      if (k === "querySelectorAll") return function (s) { return root.querySelectorAll(s); };
+      if (k === "body") return root;
+      var v = t[k];
+      return typeof v === "function" ? v.bind(t) : v;
+    }
+  });
+}
+
+/* ---------- Halaman: stack ---------- */
+(function (document) {
+// DS-LAB · Materi Stack
+(function() {
+  "use strict";
+  var $ = function(i) {
+    return document.getElementById(i)
+  };
+  var M = {
+    sim: {
+      n: "Simulasi Stack",
+      s: "push · pop · print · clear · LIFO",
+      d: "Coba operasi dasar stack. Elemen terakhir yang di-push selalu menjadi yang pertama di-pop. Dorong sampai penuh untuk melihat overflow, dan pop dari stack kosong untuk melihat underflow."
+    },
+    op: {
+      n: "Representasi & Operasi",
+      s: "struct + array · kode C++ modul",
+      d: "Stack dari array dibungkus dalam struct berisi array data dan integer top. Semua operasi dasar cukup memanipulasi top."
+    },
+    dbg: {
+      n: "Latihan Troubleshooting",
+      s: "Latihan C modul",
+      d: "Temukan kesalahan pada program STACK dari modul, pahami penyebabnya, lalu lihat versi yang sudah benar."
+    }
+  };
+  var ids = {
+      sim: "s-sim",
+      op: "s-op",
+      dbg: "s-dbg"
+    },
+    nm = {
+      sim: ["1", "Simulasi"],
+      op: ["2", "Operasi"],
+      dbg: ["3", "Troubleshooting"]
+    };
+  $("menu").innerHTML = Object.keys(M).map(function(k) {
+    return '<button data-m="' + k + '"><span class="num">' + nm[k][0] + '</span>' + nm[k][1] + '</button>'
+  }).join("");
+
+  function setup(k) {
+    document.body.classList.toggle("sm", k === "sim");
+    $("hName").textContent = M[k].n;
+    $("hSub").textContent = M[k].s;
+    $("hDesc").textContent = M[k].d;
+    Object.keys(ids).forEach(function(i) {
+      $(ids[i]).hidden = i !== k
+    });
+    document.querySelectorAll("#menu button").forEach(function(b) {
+      b.classList.toggle("active", b.dataset.m === k)
+    })
+  }
+  $("menu").onclick = function(e) {
+    var b = e.target.closest("button");
+    if (b) setup(b.dataset.m)
+  };
+  var data = [],
+    top = -1,
+    cap = 5,
+    lg = [],
+    last = -1;
+
+  function out(m, cls) {
+    $("msg").innerHTML = m;
+    lg.push(m.replace(/<[^>]+>/g, ""));
+    $("log").innerHTML = lg.slice(-30).map(function(x, i, a) {
+      return '<div class="' + (i === a.length - 1 ? "now" : "") + '">' + (lg.length - a.length + i + 1) + ". " + x + "</div>"
+    }).join("");
+    $("log").scrollTop = 1e6
+  }
+
+  function draw() {
+    var h = "";
+    for (var i = cap - 1; i >= 0; i--) {
+      var f = i <= top;
+      h += '<div class="slot"><span class="idx">[' + i + ']</span><div class="cell sl' + (f ? " fill" : "") + (i === top ? " cur" : "") + (i === last ? " new" : "") + '">' + (f ? data[i] : "") + '</div><span class="tp">' + (i === top ? "◀ top" : "") + '</span></div>'
+    }
+    $("vs").innerHTML = h;
+    $("sTop").textContent = top;
+    $("sEmp").textContent = top === -1;
+    $("sFull").textContent = top === cap - 1
+  }
+
+  function reset() {
+    data = [];
+    top = -1;
+    last = -1;
+    cap = +$("cap").value;
+    lg = [];
+    $("log").innerHTML = "";
+    $("msg").innerHTML = "Stack kosong. Kapasitas " + cap + " (index 0 sampai " + (cap - 1) + "). Tekan <b>Push</b>.";
+    draw()
+  }
+  $("cap").onchange = function() {
+    if (!busy) {
+      reset();
+      tl = [];
+      $("tlog").innerHTML = "";
+      vars(fullV())
+    }
+  };
+  var CODE = ["void push(float dta) {", "  if (isfull())", "    puts(\"Maaf, stack penuh\");", "  else {", "    stackbaru.top++;", "    stackbaru.data[stackbaru.top] = dta;", "  }", "}", "void pop() {", "  if (isempty())", "    cout << \"Data telah kosong!\";", "  else {", "    cout << \"data yang terambil : \" << stackbaru.data[stackbaru.top];", "    stackbaru.top--;", "  }", "}", "void print() {", "  for (int i = 0; i <= stackbaru.top; i++)", "    cout << stackbaru.data[i] << \"  \";", "}", "void clear() {", "  stackbaru.top = -1;", "}"];
+  $("code").innerHTML = CODE.map(function(x, i) {
+    return '<div class="line" id="L' + i + '"><span class="ln">' + (i + 1) + '</span><span>' + x.replace(/&/g, "&amp;").replace(/</g, "&lt;") + '</span></div>'
+  }).join("");
+  var busy = false,
+    tl = [];
+
+  function hl(n) {
+    for (var i = 0; i < CODE.length; i++) $("L" + i).classList.toggle("hl", i === n);
+    if (n >= 0) {
+      var e = $("L" + n),
+        c = $("cs");
+      c.scrollTop = e.offsetTop - c.clientHeight / 2
+    }
+  }
+
+  function vars(o) {
+    $("vars").innerHTML = Object.keys(o).map(function(k) {
+      return '<span>' + k + ' = ' + o[k] + '</span>'
+    }).join("")
+  }
+
+  function tline(t, now) {
+    tl.push(t);
+    $("tlog").innerHTML = tl.slice(-200).map(function(x, i, a) {
+      return '<div class="' + (i === a.length - 1 ? "now" : "") + '">' + x + '</div>'
+    }).join("");
+    $("tlog").scrollTop = 1e6;
+    $("tmsg").innerHTML = now
+  }
+
+  function play(name, tr, commit) {
+    if (busy) return;
+    busy = true;
+    tl.push("▶ " + name);
+    var i = 0;
+    (function nx() {
+      if (i >= tr.length) {
+        hl(-1);
+        busy = false;
+        commit();
+        return
+      }
+      var t = tr[i++];
+      hl(t[0]);
+      vars(t[2] || {});
+      tline((tl.length) + ". baris " + (t[0] + 1) + ": " + t[1].replace(/<[^>]+>/g, ""), "<b>Baris " + (t[0] + 1) + "</b> · " + t[1]);
+      if (t[3]) t[3]();
+      setTimeout(nx, 520)
+    })()
+  }
+
+  function fullV() {
+    return {
+      top: top,
+      "isempty()": top === -1,
+      "isfull()": top === cap - 1
+    }
+  }
+  $("bPush").onclick = function() {
+    var v = parseFloat($("val").value);
+    if (isNaN(v)) {
+      out("Isi data dulu.");
+      return
+    }
+    var f = top === cap - 1,
+      V = fullV(),
+      tr = [
+        [0, "masuk fungsi <code>push(" + v + ")</code>", V],
+        [1, "<code>isfull()</code> → top(" + top + ") == maxstack−1(" + (cap - 1) + ") ? <b>" + f + "</b>", V]
+      ];
+    if (f) {
+      tr.push([2, "stack penuh → cetak pesan overflow", V]);
+      play("push(" + v + ")", tr, function() {
+        out("Maaf, stack penuh (<b>overflow</b>): top = " + top + " = maxstack − 1.")
+      });
+      return
+    }
+    tr.push([3, "masuk cabang <code>else</code> (stack belum penuh)", V]);
+    var nt = top + 1;
+    tr.push([4, "<code>top++</code> → top = " + nt, {
+      top: nt,
+      dta: v
+    }]);
+    tr.push([5, "<code>data[" + nt + "] = " + v + "</code>", {
+      top: nt,
+      dta: v,
+      ["data[" + nt + "]"]: v
+    }]);
+    play("push(" + v + ")", tr, function() {
+      top++;
+      data[top] = v;
+      last = top;
+      draw();
+      out("push(" + v + "): <code>top++</code> → " + top + ", <code>data[" + top + "] = " + v + "</code>");
+      $("val").value = Math.floor(Math.random() * 90) + 1
+    })
+  };
+  $("bPop").onclick = function() {
+    var e = top === -1,
+      V = fullV(),
+      tr = [
+        [8, "masuk fungsi <code>pop()</code>", V],
+        [9, "<code>isempty()</code> → top == -1 ? <b>" + e + "</b>", V]
+      ];
+    if (e) {
+      tr.push([10, "stack kosong → cetak pesan underflow", V]);
+      play("pop()", tr, function() {
+        out("Data telah kosong! (<b>underflow</b>)")
+      });
+      return
+    }
+    var v = data[top];
+    tr.push([11, "masuk cabang <code>else</code> (stack ada isinya)", V]);
+    tr.push([12, "cetak <code>data[" + top + "]</code> = <b>" + v + "</b>", {
+      top: top,
+      "data[top]": v
+    }]);
+    tr.push([13, "<code>top--</code> → top = " + (top - 1), {
+      top: top - 1
+    }]);
+    play("pop()", tr, function() {
+      top--;
+      last = -1;
+      draw();
+      out("data yang terambil : <b>" + v + "</b> (top turun ke " + top + ")")
+    })
+  };
+  $("bPrint").onclick = function() {
+    var V = fullV(),
+      tr = [
+        [16, "masuk fungsi <code>print()</code>", V]
+      ];
+    for (var i = 0; i <= top; i++) {
+      tr.push([17, "<code>i = " + i + "</code>, kondisi i ≤ top(" + top + ") → <b>true</b>", {
+        i: i,
+        top: top
+      }]);
+      tr.push([18, "cetak <code>data[" + i + "]</code> = <b>" + data[i] + "</b>", {
+        i: i,
+        top: top
+      }])
+    }
+    tr.push([17, "kondisi i ≤ top → <b>false</b>, loop selesai" + (top === -1 ? " (stack kosong, tidak ada yang dicetak)" : ""), {
+      i: top + 1,
+      top: top
+    }]);
+    play("print()", tr, function() {
+      last = -1;
+      draw();
+      out(top === -1 ? "(stack kosong, tidak ada yang dicetak)" : "print() bawah → atas: <code>" + data.slice(0, top + 1).join("  ") + "</code>")
+    })
+  };
+  $("bClear").onclick = function() {
+    var V = fullV();
+    play("clear()", [
+      [20, "masuk fungsi <code>clear()</code>", V],
+      [21, "<code>top = -1</code>", {
+        top: -1
+      }]
+    ], function() {
+      top = -1;
+      data = [];
+      last = -1;
+      draw();
+      out("clear(): <code>top = -1</code>, stack kosong kembali.")
+    })
+  };
+  $("bRnd").onclick = function() {
+    if (busy) return;
+    reset();
+    for (var i = 0; i < cap - 1; i++) {
+      data[i] = Math.floor(Math.random() * 90) + 1
+    }
+    top = cap - 2;
+    draw();
+    vars(fullV());
+    out("Stack diisi " + (cap - 1) + " data, tersisa 1 slot. Push sekali lagi hingga penuh, lalu sekali lagi untuk overflow.")
+  };
+  $("bClrLog").onclick = function() {
+    tl = [];
+    lg = [];
+    $("tlog").innerHTML = "";
+    $("log").innerHTML = ""
+  };
+  setup("sim");
+  reset();
+  vars(fullV());
+})();
+
+})(scopedDoc(document.getElementById("page-stack")));
+
+/* ---------- Halaman: stack-case ---------- */
+(function (document) {
+// DS-LAB · Studi Kasus Stack
+(function() {
+  "use strict";
+  var $ = function(i) {
+    return document.getElementById(i)
+  };
+  var CODE = {
+    char: '#include <iostream>\n#include <cstring>\n#define maxstack 100\nusing namespace std;\n\nstruct STACK { int top; char data[maxstack]; } s;\n\nbool isfull()  { return s.top == maxstack - 1; }\nbool isempty() { return s.top == -1; }\nvoid push(char c) { if (!isfull()) s.data[++s.top] = c; }\nchar pop() { return isempty() ? 0 : s.data[s.top--]; }\n\nint main() {\n    char kal[100];\n    s.top = -1;\n    cout << "Kalimat : "; cin.getline(kal, 100);\n    for (int i = 0; i < strlen(kal); i++) push(kal[i]);\n    cout << "Menjadi : ";\n    while (!isempty()) cout << pop();\n    return 0;\n}',
+    word: '// push kata demi kata, pop untuk mencetak urutan kata terbalik\nstring kata, w;\nstack<string> s;           // atau STACK buatan sendiri\nstringstream ss(kal);\nwhile (ss >> kata) s.push(kata);\nwhile (!s.empty()) { cout << s.top() << " "; s.pop(); }',
+    pal: '// palindrom: kalimat sama dengan hasil pembalikannya\nfor (i = 0; i < n; i++)\n    if (isalpha(kal[i])) push(tolower(kal[i]));\nbool pal = true;\nfor (i = 0; i < n; i++)\n    if (isalpha(kal[i]) && tolower(kal[i]) != pop()) pal = false;\ncout << (pal ? "Palindrom" : "Bukan palindrom");'
+  };
+  var M = {
+    char: {
+      n: "Balik Kalimat (Tugas modul)",
+      s: "karakter demi karakter",
+      d: "Soal tugas: ‘Struktur Data’ menjadi ‘ataD rutkurtS’. Setiap karakter di-push, lalu semua di-pop untuk membentuk kalimat terbalik.",
+      v: "Struktur Data"
+    },
+    word: {
+      n: "Balik Urutan Kata",
+      s: "variasi: kata demi kata",
+      d: "Variasi tugas: yang di-push adalah kata utuh, sehingga urutan kata terbalik tetapi huruf tiap kata tetap. ‘Struktur Data’ menjadi ‘Data Struktur’.",
+      v: "Struktur Data Lab"
+    },
+    pal: {
+      n: "Cek Palindrom",
+      s: "variasi: bandingkan dengan pop",
+      d: "Push semua huruf, lalu pop dan bandingkan dengan huruf kalimat dari awal. Jika semuanya sama, kalimat adalah palindrom (spasi dan huruf besar diabaikan).",
+      v: "Katak"
+    }
+  };
+  var nm = {
+      char: ["1", "Balik Kalimat"],
+      word: ["2", "Balik Kata"],
+      pal: ["3", "Palindrom"]
+    },
+    mode = "char",
+    steps = [],
+    cur = -1,
+    timer = null,
+    vals = {
+      char: M.char.v,
+      word: M.word.v,
+      pal: M.pal.v
+    };
+  $("menu").innerHTML = Object.keys(M).map(function(k) {
+    return '<button data-m="' + k + '"><span class="num">' + nm[k][0] + '</span>' + nm[k][1] + '</button>'
+  }).join("");
+
+  function esc(x) {
+    return x.replace(/&/g, "&amp;").replace(/</g, "&lt;")
+  }
+
+  function gen() {
+    var t = $("inp").value,
+      st = [],
+      S = [],
+      o = "",
+      pu = 0,
+      po = 0,
+      items;
+    if (mode === "word") items = t.split(/\s+/).filter(Boolean);
+    else if (mode === "pal") items = t.replace(/[^A-Za-z]/g, "").toLowerCase().split("");
+    else items = t.split("");
+    var orig = items.slice(),
+      ok = true;
+
+    function P(m, x, l, v) {
+      st.push({
+        s: S.slice(),
+        o: o,
+        pu: pu,
+        po: po,
+        m: m,
+        end: x,
+        l: l,
+        v: v
+      })
+    }
+    if (!items.length) {
+      P("Isi kalimat dulu.", 1);
+      return st
+    }
+    items.forEach(function(c, ix) {
+      S.push(c);
+      pu++;
+      P("<b>push</b>(" + JSON.stringify(c) + ") → top = " + (S.length - 1), 0, mode === "char" ? [16, 9] : mode === "word" ? [4] : [1, 2], {
+        i: ix,
+        top: S.length - 1
+      })
+    });
+    var i = 0;
+    while (S.length) {
+      var c = S.pop();
+      po++;
+      if (mode === "pal") {
+        var same = c === orig[i];
+        if (!same) ok = false;
+        o += c;
+        P("<b>pop</b>() = " + JSON.stringify(c) + " dibandingkan dengan huruf ke-" + (i + 1) + " (" + JSON.stringify(orig[i]) + ") → " + (same ? "sama ✓" : "beda ✗"), 0, [4, 5], {
+          i: i,
+          top: S.length - 1,
+          "pop()": JSON.stringify(c)
+        })
+      } else {
+        o += c + (mode === "word" ? " " : "");
+        P("<b>pop</b>() = " + JSON.stringify(c) + " → ditambahkan ke hasil", 0, mode === "char" ? [18, 10] : [5], {
+          top: S.length - 1,
+          "pop()": JSON.stringify(c)
+        })
+      }
+      i++
+    }
+    var r = mode === "pal" ? (ok ? "Palindrom" : "Bukan palindrom") : o.trim();
+    st.push({
+      s: [],
+      o: o,
+      pu: pu,
+      po: po,
+      end: 1,
+      r: r,
+      l: mode === "char" ? [19] : mode === "word" ? [5] : [6],
+      v: {
+        top: -1
+      },
+      m: mode === "pal" ? (ok ? "✅ Semua huruf cocok: <b>palindrom</b>." : "❌ Ada huruf yang beda: <b>bukan palindrom</b>.") : "✅ Hasil: <b>" + esc(r) + "</b> (" + pu + " push, " + po + " pop)."
+    });
+    return st
+  }
+
+  function render() {
+    var s = cur >= 0 ? steps[cur] : {
+      s: [],
+      o: "",
+      pu: 0,
+      po: 0,
+      m: "Tekan <b>▶ Mulai</b> atau <b>Langkah ▶</b>."
+    };
+    var h = "";
+    for (var i = s.s.length - 1; i >= 0; i--) h += '<div class="cell sk' + (i === s.s.length - 1 ? " cur" : "") + '">' + esc(s.s[i] === " " ? "␣" : s.s[i]) + '</div>';
+    $("vs").innerHTML = h || '<span class="tip">(kosong)</span>';
+    hlc(s.l);
+    vars(s.v);
+    $("outb").textContent = s.o || "…";
+    $("outb").classList.toggle("done", !!s.end);
+    $("msg").innerHTML = s.m;
+    $("sStep").textContent = Math.max(cur + 1, 0);
+    $("sPush").textContent = s.pu;
+    $("sPop").textContent = s.po;
+    $("sRes").textContent = s.end && s.r ? (mode === "pal" ? s.r : "selesai") : "—"
+  }
+
+  function build() {
+    stop();
+    vals[mode] = $("inp").value;
+    steps = gen();
+    cur = -1;
+    render()
+  }
+
+  function setup(k) {
+    mode = k;
+    $("hName").textContent = M[k].n;
+    $("hSub").textContent = M[k].s;
+    $("hDesc").textContent = M[k].d;
+    $("inp").value = vals[k];
+    var cl = CODE[k].split("\n");
+    $("code").innerHTML = cl.map(function(x, i) {
+      return '<div class="line"><span class="ln">' + (i + 1) + '</span><span>' + esc(x) + '</span></div>'
+    }).join("");
+    document.querySelectorAll("#menu button").forEach(function(b) {
+      b.classList.toggle("active", b.dataset.m === k)
+    });
+    build()
+  }
+
+  function hlc(l) {
+    var e = $("code").children;
+    for (var i = 0; i < e.length; i++) e[i].classList.toggle("hl", !!l && l.indexOf(i) >= 0);
+    if (l && l.length) {
+      var c = $("cs"),
+        t = e[l[0]];
+      if (t) c.scrollTop = t.offsetTop - c.clientHeight / 2
+    }
+  }
+
+  function vars(o) {
+    $("vars").innerHTML = o ? Object.keys(o).map(function(k) {
+      return '<span>' + k + ' = ' + esc(String(o[k])) + '</span>'
+    }).join("") : ""
+  }
+
+  function stop() {
+    if (timer) {
+      clearInterval(timer);
+      timer = null
+    }
+    $("run").textContent = "▶ Mulai"
+  }
+
+  function step(d) {
+    var n = cur + d;
+    if (n < -1 || n >= steps.length) {
+      stop();
+      return false
+    }
+    cur = n;
+    render();
+    return cur < steps.length - 1
+  }
+  $("run").onclick = function() {
+    if (timer) {
+      stop();
+      return
+    }
+    if (cur >= steps.length - 1) cur = -1;
+    $("run").textContent = "⏸ Jeda";
+    timer = setInterval(function() {
+      if (!step(1)) stop()
+    }, +$("spd").value)
+  };
+  $("spd").oninput = function() {
+    if (timer) {
+      clearInterval(timer);
+      timer = setInterval(function() {
+        if (!step(1)) stop()
+      }, +$("spd").value)
+    }
+  };
+  $("next").onclick = function() {
+    stop();
+    step(1)
+  };
+  $("prev").onclick = function() {
+    stop();
+    step(-1)
+  };
+  $("rst").onclick = function() {
+    stop();
+    cur = -1;
+    render()
+  };
+  $("inp").addEventListener("input", build);
+  $("menu").onclick = function(e) {
+    var b = e.target.closest("button");
+    if (b) {
+      vals[mode] = $("inp").value;
+      setup(b.dataset.m)
+    }
+  };
+  setup("char");
+})();
+
+})(scopedDoc(document.getElementById("page-stack-case")));
+
+/* ---------- Halaman: queue ---------- */
+(function (document) {
+// DS-LAB · Materi Queue
+(function() {
+  "use strict";
+  var $ = function(i) {
+    return document.getElementById(i)
+  };
+
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+  }
+  var M = {
+    sim: {
+      n: "Simulasi Queue",
+      s: "enqueue · dequeue · print · clear · FIFO",
+      d: "Coba operasi dasar queue. Elemen pertama yang masuk selalu menjadi yang pertama keluar. Isi sampai penuh untuk melihat overflow, lalu dequeue dan enqueue lagi untuk melihat first dan last berputar (wrap) ke index 0."
+    },
+    op: {
+      n: "Representasi & Operasi",
+      s: "struct + array · pointer · kode C++ modul",
+      d: "Queue dapat dibuat dengan array (struct berisi first, last, number_of_items) atau dengan pointer (linked list dengan head dan tail)."
+    },
+    dbg: {
+      n: "Latihan Modul",
+      s: "queue linear · troubleshooting class",
+      d: "Pahami latihan queue linear pada modul, temukan kesalahan pada program queue berbasis linked list, lalu lihat versi yang sudah benar."
+    },
+    tgs: {
+      n: "Tugas Praktikum",
+      s: "queue dengan data string",
+      d: "Kembangkan program queue agar menyimpan data berupa string."
+    }
+  };
+  var ids = {
+      sim: "s-sim",
+      op: "s-op",
+      dbg: "s-dbg",
+      tgs: "s-tgs"
+    },
+    nm = {
+      sim: ["1", "Simulasi"],
+      op: ["2", "Operasi"],
+      dbg: ["3", "Latihan"],
+      tgs: ["4", "Tugas"]
+    };
+  $("menu").innerHTML = Object.keys(M).map(function(k) {
+    return '<button data-m="' + k + '"><span class="num">' + nm[k][0] + '</span>' + nm[k][1] + '</button>'
+  }).join("");
+
+  function setup(k) {
+    document.body.classList.toggle("sm", k === "sim");
+    $("hName").textContent = M[k].n;
+    $("hSub").textContent = M[k].s;
+    $("hDesc").textContent = M[k].d;
+    Object.keys(ids).forEach(function(i) {
+      $(ids[i]).hidden = i !== k
+    });
+    document.querySelectorAll("#menu button").forEach(function(b) {
+      b.classList.toggle("active", b.dataset.m === k)
+    })
+  }
+  $("menu").onclick = function(e) {
+    var b = e.target.closest("button");
+    if (b) setup(b.dataset.m)
+  };
+  var A = [],
+    first = 0,
+    last = -1,
+    n = 0,
+    cap = 5,
+    hot = -1,
+    busy = false,
+    tl = [],
+    NM = ["Andi", "Budi", "Citra", "Dewi", "Eka", "Fajar", "Gita", "Hana"],
+    ni = 0;
+
+  function V() {
+    return {
+      first: first,
+      last: last,
+      number_of_items: n,
+      "isempty()": n === 0,
+      "isfull()": n === cap
+    }
+  }
+
+  function draw() {
+    var h = "";
+    for (var i = 0; i < cap; i++) {
+      var f = n > 0 && ((i - first + cap) % cap) < n,
+        t = [];
+      if (n > 0 && i === first) t.push("first");
+      if (n > 0 && i === last) t.push("last");
+      h += '<div class="col w"><div class="tags">' + t.join("<br>") + '</div><div class="cell w' + (f ? " f" : "") + (i === hot ? " cur" : "") + '">' + (f ? esc(A[i]) : "") + '</div><div class="idx">[' + i + ']</div></div>'
+    }
+    $("row").innerHTML = h;
+    $("sF").textContent = first;
+    $("sL").textContent = last;
+    $("sN").textContent = n;
+    $("sEmp").textContent = n === 0;
+    $("sFull").textContent = n === cap
+  }
+
+  function out(m) {
+    $("msg").innerHTML = m
+  }
+
+  function reset() {
+    A = [];
+    first = 0;
+    last = -1;
+    n = 0;
+    hot = -1;
+    cap = +$("cap").value;
+    tl = [];
+    $("tlog").innerHTML = "";
+    $("msg").innerHTML = "Queue kosong. Kapasitas " + cap + " (index 0 sampai " + (cap - 1) + "). Tekan <b>Enqueue</b>.";
+    draw();
+    vars(V())
+  }
+  $("cap").onchange = function() {
+    if (!busy) reset()
+  };
+  var CODE = ["bool enqueue(Tqueue *Pqueue, Titem item) {", "  if (Pqueue->number_of_items >= MAXN)", "    return NOT_OK;          // penuh", "  else {", "    Pqueue->last++;", "    if (Pqueue->last > MAXN-1)", "      Pqueue->last = 0;     // wrap", "    Pqueue->array[Pqueue->last] = item;", "    Pqueue->number_of_items++;", "    return OK;", "  }", "}", "bool dequeue(Tqueue *Pqueue, Titem *Pitem) {", "  if (Pqueue->number_of_items == 0)", "    return NOT_OK;          // kosong", "  else {", "    *Pitem = Pqueue->array[Pqueue->first++];", "    if (Pqueue->first > MAXN-1)", "      Pqueue->first = 0;    // wrap", "    Pqueue->number_of_items--;", "    return OK;", "  }", "}", "void initialize_queue(Tqueue *Pqueue) {", "  Pqueue->first = 0;", "  Pqueue->last = -1;", "  Pqueue->number_of_items = 0;", "}", "void print(Tqueue *Pqueue) {", "  for (int i = 0; i < Pqueue->number_of_items; i++)", "    cout << Pqueue->array[(Pqueue->first + i) % MAXN] << \"  \";", "}"];
+  $("code").innerHTML = CODE.map(function(x, i) {
+    return '<div class="line" id="L' + i + '"><span class="ln">' + (i + 1) + '</span><span>' + esc(x) + '</span></div>'
+  }).join("");
+
+  function hl(k) {
+    for (var i = 0; i < CODE.length; i++) $("L" + i).classList.toggle("hl", i === k);
+    if (k >= 0) {
+      var e = $("L" + k),
+        c = $("cs");
+      c.scrollTop = e.offsetTop - c.clientHeight / 2
+    }
+  }
+
+  function vars(o) {
+    $("vars").innerHTML = Object.keys(o).map(function(k) {
+      return '<span>' + k + ' = ' + o[k] + '</span>'
+    }).join("")
+  }
+
+  function play(name, tr, commit) {
+    if (busy) return;
+    busy = true;
+    tl.push("▶ " + name);
+    var i = 0;
+    (function nx() {
+      if (i >= tr.length) {
+        hl(-1);
+        busy = false;
+        commit();
+        return
+      }
+      var t = tr[i++],
+        s = "baris " + (t[0] + 1) + ": " + t[1];
+      hl(t[0]);
+      vars(t[2] || {});
+      tl.push(s.replace(/<[^>]+>/g, ""));
+      $("tlog").innerHTML = tl.slice(-200).map(function(x, j, a) {
+        return '<div class="' + (j === a.length - 1 ? "now" : "") + '">' + esc(x) + '</div>'
+      }).join("");
+      $("tlog").scrollTop = 1e6;
+      $("tmsg").innerHTML = "<b>Baris " + (t[0] + 1) + "</b> · " + t[1];
+      setTimeout(nx, 520)
+    })()
+  }
+  $("bEn").onclick = function() {
+    var v = $("val").value.trim();
+    if (!v) {
+      out("Isi data dulu.");
+      return
+    }
+    var f = n >= cap,
+      W = V(),
+      ev = esc(v),
+      tr = [
+        [0, "masuk fungsi <code>enqueue(\"" + ev + "\")</code>", W],
+        [1, "<code>number_of_items</code>(" + n + ") ≥ MAXN(" + cap + ") ? <b>" + f + "</b>", W]
+      ];
+    if (f) {
+      tr.push([2, "queue penuh → <code>return NOT_OK</code> (overflow)", W]);
+      play("enqueue(\"" + ev + "\")", tr, function() {
+        out("Queue penuh (<b>overflow</b>): number_of_items = MAXN = " + cap + ".")
+      });
+      return
+    }
+    var l1 = last + 1,
+      wr = l1 > cap - 1,
+      nl = wr ? 0 : l1;
+    tr.push([3, "masuk cabang <code>else</code> (queue belum penuh)", W]);
+    tr.push([4, "<code>last++</code> → last = " + l1, {
+      last: l1,
+      item: '"' + ev + '"'
+    }]);
+    tr.push([5, "<code>last</code>(" + l1 + ") > MAXN−1(" + (cap - 1) + ") ? <b>" + wr + "</b>", {
+      last: l1
+    }]);
+    if (wr) tr.push([6, "<code>last = 0</code> (kembali ke awal array)", {
+      last: 0
+    }]);
+    tr.push([7, "<code>array[" + nl + "] = \"" + ev + "\"</code>", {
+      last: nl
+    }]);
+    tr.push([8, "<code>number_of_items++</code> → " + (n + 1), {
+      last: nl,
+      number_of_items: n + 1
+    }]);
+    tr.push([9, "<code>return OK</code>", {
+      last: nl,
+      number_of_items: n + 1
+    }]);
+    play("enqueue(\"" + ev + "\")", tr, function() {
+      last = nl;
+      A[nl] = v;
+      n++;
+      hot = nl;
+      draw();
+      out("enqueue(\"" + ev + "\"): disimpan di <code>array[" + nl + "]</code>" + (wr ? " (last berputar ke 0)" : "") + ", number_of_items = " + n);
+      ni++;
+      $("val").value = NM[ni % NM.length]
+    })
+  };
+  $("bDe").onclick = function() {
+    var e = n === 0,
+      W = V(),
+      tr = [
+        [12, "masuk fungsi <code>dequeue()</code>", W],
+        [13, "<code>number_of_items == 0</code> ? <b>" + e + "</b>", W]
+      ];
+    if (e) {
+      tr.push([14, "queue kosong → <code>return NOT_OK</code> (underflow)", W]);
+      play("dequeue()", tr, function() {
+        out("Queue kosong! (<b>underflow</b>)")
+      });
+      return
+    }
+    var v = A[first],
+      f1 = first + 1,
+      wr = f1 > cap - 1,
+      nf = wr ? 0 : f1;
+    tr.push([15, "masuk cabang <code>else</code> (queue ada isinya)", W]);
+    tr.push([16, "<code>*Pitem = array[" + first + "]</code> = <b>\"" + esc(v) + "\"</b>, lalu <code>first++</code> → " + f1, {
+      first: f1,
+      item: '"' + esc(v) + '"'
+    }]);
+    tr.push([17, "<code>first</code>(" + f1 + ") > MAXN−1(" + (cap - 1) + ") ? <b>" + wr + "</b>", {
+      first: f1
+    }]);
+    if (wr) tr.push([18, "<code>first = 0</code> (kembali ke awal array)", {
+      first: 0
+    }]);
+    tr.push([19, "<code>number_of_items--</code> → " + (n - 1), {
+      first: nf,
+      number_of_items: n - 1
+    }]);
+    tr.push([20, "<code>return OK</code>", {
+      first: nf,
+      number_of_items: n - 1
+    }]);
+    play("dequeue()", tr, function() {
+      first = nf;
+      n--;
+      hot = -1;
+      draw();
+      out("data yang diambil: <b>\"" + esc(v) + "\"</b> (dari depan). first = " + first + ", number_of_items = " + n)
+    })
+  };
+  $("bPrint").onclick = function() {
+    var W = V(),
+      tr = [
+        [27, "masuk fungsi <code>print()</code>", W]
+      ],
+      r = [];
+    for (var i = 0; i < n; i++) {
+      var ix = (first + i) % cap;
+      r.push(A[ix]);
+      tr.push([28, "<code>i = " + i + "</code> &lt; number_of_items(" + n + ") → <b>true</b>", {
+        i: i,
+        first: first,
+        number_of_items: n
+      }]);
+      tr.push([29, "cetak <code>array[(" + first + "+" + i + ") % " + cap + "]</code> = <b>\"" + esc(A[ix]) + "\"</b>", {
+        i: i
+      }])
+    }
+    tr.push([28, "kondisi i &lt; number_of_items → <b>false</b>, loop selesai" + (n === 0 ? " (queue kosong, tidak ada yang dicetak)" : ""), {
+      i: n
+    }]);
+    play("print()", tr, function() {
+      hot = -1;
+      draw();
+      out(n === 0 ? "(queue kosong, tidak ada yang dicetak)" : "print() depan → belakang: <code>" + r.map(esc).join("  ") + "</code>")
+    })
+  };
+  $("bClear").onclick = function() {
+    var W = V();
+    play("initialize_queue()", [
+      [22, "masuk fungsi <code>initialize_queue()</code>", W],
+      [23, "<code>first = 0</code>", {
+        first: 0
+      }],
+      [24, "<code>last = -1</code>", {
+        first: 0,
+        last: -1
+      }],
+      [25, "<code>number_of_items = 0</code>", {
+        first: 0,
+        last: -1,
+        number_of_items: 0
+      }]
+    ], function() {
+      A = [];
+      first = 0;
+      last = -1;
+      n = 0;
+      hot = -1;
+      draw();
+      out("initialize_queue(): first = 0, last = -1, queue kosong kembali.")
+    })
+  };
+  $("bRnd").onclick = function() {
+    if (busy) return;
+    reset();
+    for (var i = 0; i < cap - 1; i++) A[i] = NM[(ni + i) % NM.length];
+    ni += cap - 1;
+    n = cap - 1;
+    last = cap - 2;
+    draw();
+    vars(V());
+    out("Queue diisi " + (cap - 1) + " data, tersisa 1 slot. Enqueue sekali hingga penuh, sekali lagi untuk overflow. Atau dequeue dulu lalu enqueue untuk melihat wrap.");
+    $("val").value = NM[ni % NM.length]
+  };
+  $("bClrLog").onclick = function() {
+    tl = [];
+    $("tlog").innerHTML = ""
+  };
+  setup("sim");
+  reset();
+})();
+
+})(scopedDoc(document.getElementById("page-queue")));
+
+/* ---------- Halaman: queue-case ---------- */
+(function (document) {
+// DS-LAB · Studi Kasus Queue
+(function() {
+  "use strict";
+  var $ = function(i) {
+    return document.getElementById(i)
+  };
+  var CODE = {
+    "loket": "#include <iostream>\n#include <queue>\n#include <string>\nusing namespace std;\n\nint main() {\n    queue<string> q;          // atau Queue buatan sendiri\n    string nama; int n;\n    cout << \"Jumlah antrian: \"; cin >> n;\n    for (int i = 0; i < n; i++) { cin >> nama; q.push(nama); }   // enqueue\n    while (!q.empty()) {\n        cout << \"Dilayani: \" << q.front() << endl;\n        q.pop();                                                   // dequeue\n    }\n    return 0;\n}",
+    "rr": "struct Proses { string id; int sisa; };\nqueue<Proses> q;              // sudah berisi semua proses\nint waktu = 0, quantum = 2;\nwhile (!q.empty()) {\n    Proses p = q.front(); q.pop();       // dequeue\n    int jalan = min(quantum, p.sisa);\n    waktu += jalan; p.sisa -= jalan;\n    if (p.sisa > 0) q.push(p);           // belum selesai: antre lagi\n    else cout << p.id << \" selesai pada t=\" << waktu << endl;\n}",
+    "jos": "queue<string> q;              // berisi semua peserta\nint k = 3;\nwhile (q.size() > 1) {\n    for (int i = 1; i < k; i++) {        // oper k-1 kali\n        q.push(q.front()); q.pop();      // dequeue lalu enqueue lagi\n    }\n    cout << q.front() << \" keluar\" << endl;\n    q.pop();                             // dequeue: tereliminasi\n}\ncout << \"Pemenang: \" << q.front();"
+  };
+  var M = {
+    loket: {
+      n: "Antrian Loket (Tugas modul)",
+      s: "antrian data string · FIFO",
+      d: "Soal tugas: memasukkan, menghapus, dan mencetak antrian data string. Semua nama di-enqueue, lalu di-dequeue satu per satu. Yang datang pertama dilayani pertama.",
+      v: "Andi, Budi, Citra, Dewi",
+      w: "Setiap nama masuk di belakang (enqueue) dan dilayani dari depan (dequeue), sehingga urutan layanan sama dengan urutan datang. Kalau memakai stack, urutannya akan terbalik. Waktu <b>O(n)</b> dan setiap enqueue/dequeue bernilai <b>O(1)</b>."
+    },
+    rr: {
+      n: "Round Robin (Penjadwalan CPU)",
+      s: "variasi: dequeue, jalan, enqueue lagi",
+      d: "Setiap proses diberi jatah waktu (quantum). Proses di depan diambil, dijalankan sebesar quantum, lalu bila belum selesai kembali antre di belakang. Format input: ID:sisa waktu.",
+      v: "A:5, B:3, C:4",
+      n0: 2,
+      nl: "Quantum",
+      w: "Giliran yang adil terjadi karena proses yang baru dijalankan pindah ke belakang antrian, sementara proses lain maju ke depan. Inilah penerapan klasik queue pada sistem operasi."
+    },
+    jos: {
+      n: "Permainan Eliminasi (Josephus)",
+      s: "variasi: putar k-1 kali, keluarkan satu",
+      d: "Peserta duduk melingkar. Hitungan ke-k keluar. Dalam queue: dequeue lalu enqueue kembali sebanyak k-1 kali (memutar), kemudian dequeue sekali untuk eliminasi, sampai tersisa satu pemenang.",
+      v: "Andi, Budi, Citra, Dewi, Eka",
+      n0: 3,
+      nl: "k (hitungan)",
+      w: "Memutar lingkaran sama dengan memindahkan elemen depan ke belakang. Dengan queue, simulasi cukup memakai dua operasi dasar tanpa perlu array melingkar secara eksplisit."
+    }
+  };
+  var nm = {
+      loket: ["1", "Antrian Loket"],
+      rr: ["2", "Round Robin"],
+      jos: ["3", "Eliminasi"]
+    },
+    mode = "loket",
+    steps = [],
+    cur = -1,
+    timer = null,
+    vals = {},
+    nums = {};
+  Object.keys(M).forEach(function(k) {
+    vals[k] = M[k].v;
+    nums[k] = M[k].n0 || 0
+  });
+  $("menu").innerHTML = Object.keys(M).map(function(k) {
+    return '<button data-m="' + k + '"><span class="num">' + nm[k][0] + '</span>' + nm[k][1] + '</button>'
+  }).join("");
+
+  function esc(x) {
+    return String(x).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+  }
+
+  function parse(t) {
+    return t.split(",").map(function(x) {
+      return x.trim()
+    }).filter(Boolean)
+  }
+
+  function gen() {
+    var t = $("inp").value,
+      k = Math.max(1, Math.min(9, parseInt($("num").value) || 1)),
+      st = [],
+      Q = [],
+      o = [],
+      en = 0,
+      de = 0,
+      it, time = 0;
+
+    function P(m, x, r, l, v) {
+      st.push({
+        q: Q.map(function(e) {
+          return e.l
+        }),
+        o: o.join(mode === "rr" ? "   " : " → "),
+        en: en,
+        de: de,
+        m: m,
+        end: x,
+        r: r,
+        l: l,
+        v: v
+      })
+    }
+
+    function J(s) {
+      return JSON.stringify(s)
+    }
+    if (mode === "rr") {
+      it = parse(t).map(function(x) {
+        var p = x.split(":");
+        return {
+          id: p[0].trim(),
+          rem: parseInt(p[1])
+        }
+      }).filter(function(e) {
+        return e.id && e.rem > 0
+      });
+      if (!it.length) {
+        P("Isi proses, contoh <b>A:5, B:3</b>.", 1);
+        return st
+      }
+      var lab = function(e) {
+        return e.id + "(" + e.rem + ")"
+      };
+      it.forEach(function(e) {
+        e.l = lab(e);
+        Q.push(e);
+        en++;
+        P("<b>enqueue</b>(" + esc(e.l) + ") → masuk di belakang", 0, 0, [1], {
+          "q.size()": Q.length
+        })
+      });
+      while (Q.length) {
+        var e = Q.shift();
+        de++;
+        var run = Math.min(k, e.rem);
+        time += run;
+        e.rem -= run;
+        if (e.rem > 0) {
+          e.l = lab(e);
+          Q.push(e);
+          en++;
+          P("<b>dequeue</b> " + esc(e.id) + ", jalan " + run + " → t = " + time + ", sisa " + e.rem + " → <b>enqueue</b> kembali", 0, 0, [3, 4, 5, 6, 7], {
+            waktu: time,
+            jalan: run,
+            "p.sisa": e.rem
+          })
+        } else {
+          o.push(e.id + "@t" + time);
+          P("<b>dequeue</b> " + esc(e.id) + ", jalan " + run + " → t = " + time + ", <b>selesai</b>", 0, 0, [3, 4, 5, 6, 8], {
+            waktu: time,
+            jalan: run,
+            "p.sisa": 0
+          })
+        }
+      }
+      P("✅ Semua proses selesai pada t = " + time + ". Urutan selesai: <b>" + esc(o.join(", ")) + "</b>.", 1, "selesai", [9], {
+        waktu: time
+      });
+      return st
+    }
+    it = parse(t).map(function(x) {
+      return {
+        l: x
+      }
+    });
+    if (!it.length || (mode === "jos" && it.length < 2)) {
+      P(mode === "jos" ? "Isi minimal 2 nama, pisahkan dengan koma." : "Isi nama dulu, pisahkan dengan koma.", 1);
+      return st
+    }
+    it.forEach(function(e) {
+      Q.push(e);
+      en++;
+      P("<b>enqueue</b>(" + esc(J(e.l)) + ") → masuk di belakang", 0, 0, mode === "loket" ? [9] : [0], {
+        "q.size()": Q.length
+      })
+    });
+    if (mode === "loket") {
+      while (Q.length) {
+        var e = Q.shift();
+        de++;
+        o.push(e.l);
+        P("<b>dequeue</b>() = " + esc(J(e.l)) + " → dilayani (keluar dari depan)", 0, 0, [10, 11, 12], {
+          "q.front()": J(e.l),
+          "q.size()": Q.length
+        })
+      }
+      P("✅ Urutan dilayani sama dengan urutan datang (FIFO): <b>" + esc(o.join(" → ")) + "</b>.", 1, "selesai", [14], {
+        "q.size()": 0
+      });
+      return st
+    }
+    while (Q.length > 1) {
+      for (var i = 1; i < k; i++) {
+        var y = Q.shift();
+        Q.push(y);
+        de++;
+        en++;
+        P("putar " + i + "/" + (k - 1) + ": <b>dequeue</b>(" + esc(J(y.l)) + ") lalu <b>enqueue</b> kembali", 0, 0, [3, 4], {
+          i: i,
+          k: k,
+          "q.size()": Q.length
+        })
+      }
+      var x = Q.shift();
+      de++;
+      o.push(x.l);
+      P("<b>dequeue</b>() = " + esc(J(x.l)) + " → <b>keluar</b> (hitungan ke-" + k + ")", 0, 0, [6, 7], {
+        "q.size()": Q.length
+      })
+    }
+    P("✅ Pemenang: <b>" + esc(Q[0].l) + "</b>. Urutan keluar: " + esc(o.join(" → ")) + ".", 1, "selesai", [9], {
+      "q.size()": 1
+    });
+    return st
+  }
+
+  function render() {
+    var s = cur >= 0 ? steps[cur] : {
+      q: [],
+      o: "",
+      en: 0,
+      de: 0,
+      m: "Tekan <b>▶ Mulai</b> atau <b>Langkah ▶</b>."
+    };
+    var h = '<span class="fl">keluar ◀</span>';
+    s.q.forEach(function(x, i) {
+      h += '<div class="cell q' + (i === 0 ? " cur" : "") + '">' + esc(x) + '</div>'
+    });
+    if (!s.q.length) h += '<span class="tip">(kosong)</span>';
+    h += '<span class="fl">◀ masuk</span>';
+    $("vs").innerHTML = h;
+    hlc(s.l);
+    vars(s.v);
+    $("outb").textContent = s.o || "…";
+    $("outb").classList.toggle("done", !!s.end);
+    $("msg").innerHTML = s.m;
+    $("sStep").textContent = Math.max(cur + 1, 0);
+    $("sEn").textContent = s.en;
+    $("sDe").textContent = s.de;
+    $("sRes").textContent = s.end && s.r ? "selesai" : "—"
+  }
+
+  function build() {
+    stop();
+    vals[mode] = $("inp").value;
+    nums[mode] = $("num").value;
+    steps = gen();
+    cur = -1;
+    render()
+  }
+
+  function setup(k) {
+    mode = k;
+    $("hName").textContent = M[k].n;
+    $("hSub").textContent = M[k].s;
+    $("hDesc").textContent = M[k].d;
+    $("inp").value = vals[k];
+    var cl = CODE[k].split("\n");
+    $("code").innerHTML = cl.map(function(x, i) {
+      return '<div class="line"><span class="ln">' + (i + 1) + '</span><span>' + esc(x) + '</span></div>'
+    }).join("");
+    $("inL").firstChild.textContent = k === "rr" ? "Proses (ID:sisa waktu)" : "Nama (pisahkan dengan koma)";
+    $("numW").hidden = !M[k].nl;
+    $("numL").textContent = M[k].nl || "";
+    $("num").value = nums[k] || 1;
+    $("oL").textContent = k === "loket" ? "Urutan dilayani" : k === "rr" ? "Urutan selesai" : "Urutan keluar";
+    $("why").innerHTML = M[k].w;
+    document.querySelectorAll("#menu button").forEach(function(b) {
+      b.classList.toggle("active", b.dataset.m === k)
+    });
+    build()
+  }
+
+  function hlc(l) {
+    var e = $("code").children;
+    for (var i = 0; i < e.length; i++) e[i].classList.toggle("hl", !!l && l.indexOf(i) >= 0);
+    if (l && l.length) {
+      var c = $("cs"),
+        t = e[l[0]];
+      if (t) c.scrollTop = t.offsetTop - c.clientHeight / 2
+    }
+  }
+
+  function vars(o) {
+    $("vars").innerHTML = o ? Object.keys(o).map(function(k) {
+      return '<span>' + k + ' = ' + esc(String(o[k])) + '</span>'
+    }).join("") : ""
+  }
+
+  function stop() {
+    if (timer) {
+      clearInterval(timer);
+      timer = null
+    }
+    $("run").textContent = "▶ Mulai"
+  }
+
+  function step(d) {
+    var n = cur + d;
+    if (n < -1 || n >= steps.length) {
+      stop();
+      return false
+    }
+    cur = n;
+    render();
+    return cur < steps.length - 1
+  }
+  $("run").onclick = function() {
+    if (timer) {
+      stop();
+      return
+    }
+    if (cur >= steps.length - 1) cur = -1;
+    $("run").textContent = "⏸ Jeda";
+    timer = setInterval(function() {
+      if (!step(1)) stop()
+    }, +$("spd").value)
+  };
+  $("spd").oninput = function() {
+    if (timer) {
+      clearInterval(timer);
+      timer = setInterval(function() {
+        if (!step(1)) stop()
+      }, +$("spd").value)
+    }
+  };
+  $("next").onclick = function() {
+    stop();
+    step(1)
+  };
+  $("prev").onclick = function() {
+    stop();
+    step(-1)
+  };
+  $("rst").onclick = function() {
+    stop();
+    cur = -1;
+    render()
+  };
+  $("inp").addEventListener("input", build);
+  $("num").addEventListener("input", build);
+  $("menu").onclick = function(e) {
+    var b = e.target.closest("button");
+    if (b) {
+      vals[mode] = $("inp").value;
+      nums[mode] = $("num").value;
+      setup(b.dataset.m)
+    }
+  };
+  setup("loket");
+})();
+
+})(scopedDoc(document.getElementById("page-queue-case")));
+
+(function () {
+  "use strict";
+  var TITLES = {"home": "Dashboard", "stack": "Materi Stack", "stack-case": "Studi Kasus Stack", "queue": "Materi Queue", "queue-case": "Studi Kasus Queue"};
+  var CHIPS = {"home": "Praktikum Struktur Data", "stack": "Materi Stack", "stack-case": "Studi Kasus Stack", "queue": "Materi Queue", "queue-case": "Studi Kasus Queue"};
+  var chip = document.getElementById("dslChip");
+  var views = document.querySelectorAll("[data-page]");
+  var links = document.querySelectorAll("[data-route]");
+
+  function route() {
+    var h = decodeURIComponent(location.hash.replace(/^#/, ""));
+    var key = TITLES[h] ? h : "home";
+    views.forEach(function (v) { v.hidden = v.getAttribute("data-page") !== key; });
+    links.forEach(function (a) {
+      var on = a.getAttribute("data-route") === key;
+      a.classList.toggle("is-active", on);
+      if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    });
+    chip.textContent = CHIPS[key];
+    document.title = TITLES[key] + " · DS-LAB";
+    var anchor = !TITLES[h] && h ? document.getElementById(h) : null;
+    if (anchor) anchor.scrollIntoView({ behavior: "smooth" }); else window.scrollTo(0, 0);
+  }
+
+  document.addEventListener("click", function (ev) {
+    var a = ev.target.closest("[data-scroll]");
+    if (!a) return;
+    ev.preventDefault();
+    if (location.hash && location.hash !== "#home") location.hash = "#home";
+    var t = document.getElementById(a.getAttribute("data-scroll"));
+    setTimeout(function () { if (t) t.scrollIntoView({ behavior: "smooth" }); }, 0);
+  });
+  window.addEventListener("hashchange", route);
+  route();
+})();
+</script>
+</body>
+</html>
