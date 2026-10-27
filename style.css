@@ -548,6 +548,15 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--d-side-a); outl
 }
 
 
+/* ===== Kartu topik Linked List di dashboard ===== */
+.tc--linked { --g: linear-gradient(140deg, #F59E0B 0%, #E11D48 100%); --sh: #E11D48; grid-column: 1 / -1; }
+.tc__art--linked { align-items: center; gap: 0; }
+.tc__art--linked i { width: 22px; height: 22px; }
+.tc__art--linked i + i { margin-left: 14px; position: relative; }
+.tc__art--linked i + i::before { content: ""; position: absolute; left: -14px; top: 50%; width: 14px; height: 1.5px; background: rgba(255, 255, 255, .85); }
+.tc__art--linked i:first-child { background: #fff; }
+
+
 /* ===== Variabel halaman (Materi & Studi Kasus) dipetakan ke palet dashboard ===== */
 :root {
   --bg: var(--d-bg);
@@ -4963,6 +4972,49 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--d-side-a); outl
     max-height: 460px
 }
 
+/* ===== Halaman: linked (memakai dasar gaya stack + tambahan) ===== */
+/* DS-LAB · Materi Linked List (tambahan di atas gaya dasar halaman Stack) */
+.pg-linked .card.tb { margin-bottom: 14px; }
+.pg-linked .llg { display: grid; grid-template-columns: 1.15fr 1fr; gap: 12px; margin-top: 12px; align-items: stretch; }
+.pg-linked .llg .panel { min-height: 0; }
+.pg-linked .llg .code-scroll { max-height: 440px; }
+@media (max-width: 899px) { .pg-linked .llg { grid-template-columns: 1fr; } }
+
+/* senarai berkait */
+.pg-linked .llv { display: flex; flex-wrap: wrap; align-items: flex-start; row-gap: 38px; padding: 36px 4px 10px; min-height: 140px; }
+.pg-linked .llv .hd { display: flex; flex-direction: column; align-items: center; flex: none; }
+.pg-linked .llv .hd .hb { height: 40px; display: grid; place-items: center; padding: 0 12px; border: 1.5px solid var(--accent); border-radius: 10px; background: var(--bg); font: 600 13px var(--mono); }
+.pg-linked .llv .hd small { margin-top: 5px; font: 10.5px var(--mono); color: var(--muted); }
+.pg-linked .llv .ar { flex: none; width: 28px; text-align: center; color: var(--accent); font: 600 18px/40px var(--mono); }
+.pg-linked .llv .nd { position: relative; display: flex; flex-direction: column; align-items: center; flex: none; }
+.pg-linked .llv .box { display: flex; border: 1.5px solid var(--accent); border-radius: 10px; background: var(--accent-soft); overflow: hidden; transition: all .25s; }
+.pg-linked .llv .inf { min-width: 54px; height: 40px; display: grid; place-items: center; padding: 0 10px; font: 600 15px var(--mono); }
+.pg-linked .llv .nx { width: 30px; height: 40px; display: grid; place-items: center; border-left: 1.5px solid var(--accent); background: var(--bg); color: var(--accent); font: 600 11px var(--mono); }
+.pg-linked .llv .ad { margin-top: 5px; font: 10.5px var(--mono); color: var(--muted); }
+.pg-linked .llv .nl { position: relative; flex: none; height: 40px; display: grid; place-items: center; padding: 0 12px; border: 1.5px dashed var(--border); border-radius: 10px; font: 600 12px var(--mono); color: var(--muted); }
+.pg-linked .llv .tags { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 5px; display: flex; gap: 3px; white-space: nowrap; }
+.pg-linked .llv .tag { padding: 2px 7px; border-radius: 99px; background: var(--amber); color: var(--ink); font: 600 10px var(--mono); }
+.pg-linked .llv .tag.Pmax, .pg-linked .llv .tag.Pmin { background: var(--sage); }
+.pg-linked .llv .tag.p { background: var(--coral); }
+.pg-linked .llv .nd.cur .box { border-color: var(--amber); background: color-mix(in srgb, var(--amber) 22%, transparent); }
+.pg-linked .llv .nd.best .box { border-color: var(--sage); background: color-mix(in srgb, var(--sage) 28%, transparent); }
+.pg-linked .llv .nd.pp .box { border-color: var(--coral); }
+.pg-linked .llv .nd.new { animation: pop .3s; }
+.pg-linked .llv .tmpn { flex-basis: 100%; display: flex; align-items: center; gap: 12px; padding: 8px 10px; border: 1px dashed var(--border); border-radius: 10px; }
+.pg-linked .llv .tmpn .tl { font: 600 12px var(--mono); color: var(--coral); }
+.pg-linked .llv .tmpn .ad { margin: 0; }
+.pg-linked .llv .empty { align-self: center; font-size: 13px; color: var(--muted); padding-left: 8px; }
+
+/* diagram jenis senarai */
+.pg-linked .ll-svg { display: block; width: 100%; min-width: 440px; max-width: 600px; height: auto; margin: 4px 0 12px; }
+.pg-linked .ll-svg text { font: 600 13px var(--mono); fill: var(--text); }
+.pg-linked .ll-svg text.mu { fill: var(--muted); font-weight: 500; font-size: 12px; }
+.pg-linked .ll-svg text.sm { font-size: 10px; }
+.pg-linked .ll-svg .bx { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+.pg-linked .ll-svg .nl { fill: none; stroke: var(--border); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.pg-linked .ll-svg .dv { stroke: var(--accent); stroke-width: 1.5; }
+.pg-linked .ll-svg .ar { fill: none; stroke: var(--accent); stroke-width: 1.6; }
+
 /* ===== Penyatuan tema halaman dengan dashboard ===== */
 /*
  * Menyamakan tema halaman Materi & Studi Kasus dengan Dashboard.
@@ -5004,3 +5056,67 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--d-side-a); outl
 
 /* ===== Router satu halaman ===== */
 .pg[hidden], #page-home[hidden] { display: none !important; }
+
+
+/* ===== Double & Circular Linked List + studi kasus ===== */
+.tc--linked { grid-column: auto; }
+.tc--dbl { --g: linear-gradient(140deg, #06B6D4 0%, #6366F1 100%); --sh: #6366F1; }
+.tc--circ { --g: linear-gradient(140deg, #10B981 0%, #0EA5E9 100%); --sh: #0EA5E9; grid-column: 1 / -1; }
+.pg-linked .llv .nd.new .box { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); }
+.pg-linked .llv .empty { align-self: center; margin-left: 12px; font-size: 13px; color: var(--muted); }
+.pg-linked .llv .ar { align-self: center; margin-top: 18px; padding: 0 4px; color: var(--accent); font-weight: 700; }
+.pg-queue-case .qrow .fl { color: var(--muted); font: 600 12px var(--mono); }
+
+/* ===== Tambahan: topik Rekursif & Tree ===== */
+.tc--rec{--g:linear-gradient(140deg,#F59E0B 0%,#EF4444 100%);--sh:#EF4444}
+.tc--tree{--g:linear-gradient(140deg,#8B5CF6 0%,#EC4899 100%);--sh:#8B5CF6}
+.tn{transform-box:fill-box;transform-origin:center;animation:tpop .45s cubic-bezier(.3,1.5,.5,1) both}
+.tn:hover circle{filter:brightness(1.12)}
+.te{stroke-dasharray:100;animation:tdraw .6s ease both}
+@keyframes tpop{
+  from{opacity:0;transform:scale(.3)}to{opacity:1;transform:scale(1)}}
+@keyframes tdraw{
+  from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){.tn,.te{animation:none!important}}
+
+/* ===== Tambahan: gambar tree (node, garis, panah, legenda) ===== */
+.tw-flush{margin:0}
+.tw-gap{margin:0 0 10px}
+.tw-top0{margin-top:0}
+.tw-w70{width:70px}
+.tw-w80{width:80px}
+.tw-w320{width:min(320px,100%)}
+.tsvg{display:block;margin:0 auto;max-width:100%;height:auto}
+.tb{stroke:var(--muted);opacity:.7}
+.na{animation:none!important}
+.tn.clk{cursor:pointer}
+.tnt{font-family:var(--mono);font-weight:700;fill:#fff;pointer-events:none}
+.tband0,.tband1{fill:var(--accent)}
+.tband0{opacity:.08}
+.tband1{opacity:.03}
+.tlv{font:600 10px var(--mono);fill:var(--muted)}
+.tbg{fill:var(--panel);stroke:var(--accent)}
+.tbt{font:700 9px var(--mono);fill:var(--text)}
+.ov{fill:none;stroke-width:4;stroke-linecap:round}
+.ov.ov-d{stroke:#6D4FE0}
+.ov.ov-u{stroke:#F59E0B;stroke-dasharray:7 5}
+.ova{stroke:#fff;stroke-width:1.2}
+.ova.ov-d{fill:#6D4FE0}
+.ova.ov-u{fill:#F59E0B}
+.lg{display:inline-flex;align-items:center;gap:5px;margin:0 12px 4px 0;font-size:12px}
+.lg i{width:12px;height:12px;border-radius:50%}
+.lg-root{background:linear-gradient(135deg,#A78BFA,#6D4FE0)}
+.lg-in{background:linear-gradient(135deg,#38BDF8,#0284C7)}
+.lg-leaf{background:linear-gradient(135deg,#34D399,#059669)}
+.lg-sel{background:linear-gradient(135deg,#FBBF24,#EF4444)}
+.lg-anc{background:linear-gradient(135deg,#FDE68A,#F59E0B)}
+.lg-desc{background:linear-gradient(135deg,#F9A8D4,#DB2777)}
+.lg-sib{background:linear-gradient(135deg,#BEF264,#65A30D)}
+.lg-vis{background:linear-gradient(135deg,#A5B4FC,#4F46E5)}
+.lg-dn{color:#6D4FE0}
+.lg-up{color:#F59E0B}
+.tsm{font-weight:500;color:var(--muted)}
+.tcol{text-align:center}
+.tidx{font:600 10px var(--mono);color:var(--muted)}
+.ck-ok{background:#10B98122;border-color:#10B981;color:#059669}
+.ck-no{opacity:.55}
