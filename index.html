@@ -84,36 +84,54 @@
             <span><b>DS-LAB</b><small>Data Structure Lab</small></span>
         </a>
 
-        <nav class="dside__nav" aria-label="Menu utama">
-            <a href="#home" data-route="home"><span class="dside__no">&#8962;</span>Dashboard</a>
-            <p class="dside__label">Stack</p>
-            <a href="#stack" data-route="stack"><span class="dside__no">1</span>Materi Stack</a>
-            <a href="#stack-case" data-route="stack-case"><span class="dside__no">2</span>Studi Kasus Stack</a>
-            <p class="dside__label">Queue</p>
-            <a href="#queue" data-route="queue"><span class="dside__no">3</span>Materi Queue</a>
-            <a href="#queue-case" data-route="queue-case"><span class="dside__no">4</span>Studi Kasus Queue</a>
-            <p class="dside__label">Single Linked List</p>
-            <a href="#linked" data-route="linked"><span class="dside__no">5</span>Materi Single</a>
-            <a href="#linked-case" data-route="linked-case"><span class="dside__no">6</span>Studi Kasus Single</a>
-            <p class="dside__label">Double Linked List</p>
-            <a href="#double" data-route="double"><span class="dside__no">7</span>Materi Double</a>
-            <a href="#double-case" data-route="double-case"><span class="dside__no">8</span>Studi Kasus Double</a>
-            <p class="dside__label">Circular Linked List</p>
-            <a href="#circular" data-route="circular"><span class="dside__no">9</span>Materi Circular</a>
-            <a href="#circular-case" data-route="circular-case"><span class="dside__no">10</span>Studi Kasus Circular</a>
-            <p class="dside__label">Rekursif</p>
-            <a href="#rekursif" data-route="rekursif"><span class="dside__no">11</span>Materi Rekursif</a>
-            <a href="#rekursif-case" data-route="rekursif-case"><span class="dside__no">12</span>Studi Kasus Rekursif</a>
-            <p class="dside__label">Tree</p>
-            <a href="#tree" data-route="tree"><span class="dside__no">13</span>Materi Tree</a>
-            <a href="#tree-case" data-route="tree-case"><span class="dside__no">14</span>Studi Kasus Tree</a>
+        <button type="button" class="dside__toggle" id="dsMenuBtn" aria-expanded="false" aria-controls="dsNav" aria-label="Buka menu">
+            <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+        </button>
+
+        <nav class="dside__nav" id="dsNav" aria-label="Menu utama">
+            <a href="#home" data-route="home"><svg class="dside__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Dashboard</a>
+            <p class="dside__label">Topik belajar</p>
+            <details class="dgrp">
+                <summary><span class="dside__dot" aria-hidden="true"></span>Stack</summary>
+                <div class="dgrp__sub"><a href="#stack" data-route="stack">Materi</a><a href="#stack-case" data-route="stack-case">Studi Kasus</a></div>
+            </details>
+            <details class="dgrp">
+                <summary><span class="dside__dot" aria-hidden="true"></span>Queue</summary>
+                <div class="dgrp__sub"><a href="#queue" data-route="queue">Materi</a><a href="#queue-case" data-route="queue-case">Studi Kasus</a></div>
+            </details>
+            <details class="dgrp">
+                <summary><span class="dside__dot" aria-hidden="true"></span>Linked List</summary>
+                <div class="dgrp__sub dgrp__sub--ll">
+                    <details class="dgrp dgrp--in">
+                        <summary>Single</summary>
+                        <div class="dgrp__sub"><a href="#linked" data-route="linked">Materi</a><a href="#linked-case" data-route="linked-case">Studi Kasus</a></div>
+                    </details>
+                    <details class="dgrp dgrp--in">
+                        <summary>Double</summary>
+                        <div class="dgrp__sub"><a href="#double" data-route="double">Materi</a><a href="#double-case" data-route="double-case">Studi Kasus</a></div>
+                    </details>
+                    <details class="dgrp dgrp--in">
+                        <summary>Circular</summary>
+                        <div class="dgrp__sub"><a href="#circular" data-route="circular">Materi</a><a href="#circular-case" data-route="circular-case">Studi Kasus</a></div>
+                    </details>
+                </div>
+            </details>
+            <details class="dgrp">
+                <summary><span class="dside__dot" aria-hidden="true"></span>Rekursif</summary>
+                <div class="dgrp__sub"><a href="#rekursif" data-route="rekursif">Materi</a><a href="#rekursif-case" data-route="rekursif-case">Studi Kasus</a></div>
+            </details>
+            <details class="dgrp">
+                <summary><span class="dside__dot" aria-hidden="true"></span>Tree</summary>
+                <div class="dgrp__sub"><a href="#tree" data-route="tree">Materi</a><a href="#tree-case" data-route="tree-case">Studi Kasus</a></div>
+            </details>
         </nav>
 
-        <div class="dside__promo">
-            <div class="dside__cube" aria-hidden="true"><i></i><i></i><i></i></div>
-            <p>Baru mulai belajar?</p>
-            <a href="#stack">Mulai dari Stack</a>
-        </div>
+        <footer class="dside__foot">
+            <a href="#about" data-route="about" class="dside__me">
+                <span class="dside__avatar" aria-hidden="true">MS</span>
+                <span><b>About Me</b><small>Muhammad Sonhaji Akbar</small></span>
+            </a>
+        </footer>
     </aside>
 
     <div class="dmain">
@@ -305,6 +323,59 @@
 
 <p class="dsrc">Basis: <i>Modul Praktikum Algoritma dan Struktur Data, Modul IV &mdash; Stack</i> , <i>Modul Praktikum Struktur Data 5 &mdash; Queue</i>, dan <i>Modul Praktikum Algoritma dan Struktur Data &mdash; Senarai Berkait</i>.</p>
 </div>
+
+<section class="abt" id="page-about" data-page="about" hidden>
+    <header class="abt__hero">
+        <div class="abt__photo">
+            <span class="abt__init" aria-hidden="true">MS</span>
+            <img src="https://staticsiakadu.unesa.ac.id/photo/dosen/300/bb2c1bd4-0f70-4907-b594-fa01395c9d9a.jpg" alt="Foto Muhammad Sonhaji Akbar" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">
+        </div>
+        <div class="abt__id">
+            <p class="abt__kicker">About Me</p>
+            <h1>Muhammad Sonhaji Akbar</h1>
+            <p class="abt__role">Dosen &amp; Peneliti &middot; Universitas Negeri Surabaya</p>
+            <ul class="abt__tags">
+                <li>NIDN 0030049403</li>
+                <li>SINTA ID 6907883</li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="abt__stats">
+        <div><b>150</b><span>Skor SINTA</span></div>
+        <div><b>58</b><span>Publikasi</span></div>
+        <div><b>2015&ndash;2026</b><span>Rentang publikasi</span></div>
+    </div>
+
+    <div class="abt__grid">
+        <section class="abt__card">
+            <h2>Fokus riset</h2>
+            <p class="abt__lead">Dari publikasinya, riset saya berkisar pada pengembangan sistem informasi dan teknologi pembelajaran, dengan kecerdasan buatan sebagai arah yang terus tumbuh.</p>
+            <ul class="abt__chips">
+                <li>Sistem Informasi &amp; Web</li>
+                <li>LMS &amp; Pembelajaran Berbasis Proyek</li>
+                <li>Kecerdasan Buatan &amp; Chatbot</li>
+                <li>Machine Learning</li>
+                <li>Data Mining &amp; Text Mining</li>
+                <li>Berpikir Komputasional</li>
+            </ul>
+        </section>
+
+        <section class="abt__card">
+            <h2>Publikasi terbaru</h2>
+            <ol class="abt__pubs">
+        <li><span class="abt__yr">2026</span><div><b>Development of a Hybrid AI System Integrating Chatbot-Based Intelligent Assistants for Adaptive Interaction</b><small>E3S Web of Conferences 736, 03018</small></div></li>
+        <li><span class="abt__yr">2026</span><div><b>Generative AI for Sustainable Activity Diagram Modelling: The Role of Case Complexity and Prompt Language</b><small>E3S Web of Conferences 736, 03013</small></div></li>
+        <li><span class="abt__yr">2026</span><div><b>Rancang Bangun LMS Berbasis Web Menggunakan Project-Based Learning untuk Meningkatkan Kemampuan Berpikir Komputasional</b><small>Jurnal Ilmu Ekonomi, Pendidikan dan Teknik 3 (5)</small></div></li>
+        <li><span class="abt__yr">2026</span><div><b>Web-based Information System for Ornamental Fish Business in Surabaya</b><small>Sistemasi: Jurnal Sistem Informasi 15 (6)</small></div></li>
+        <li><span class="abt__yr">2025</span><div><b>Click Count Forecasting with Bi-Directional LSTM and Temporal Feature Fusion</b><small>ICADEIS 2025</small></div></li>
+        <li><span class="abt__yr">2025</span><div><b>Application of Naïve Bayes Method for Student Performance Classification</b><small>Sistemasi: Jurnal Sistem Informasi 14 (2)</small></div></li>
+            </ol>
+        </section>
+    </div>
+
+    <p class="dsrc">Sumber data: <a class="abt__link" href="https://unesa.ac.id/research/dosen/bb2c1bd4-0f70-4907-b594-fa01395c9d9a/" target="_blank" rel="noopener">Research UNESA &mdash; profil Muhammad Sonhaji Akbar</a>. Foto dimuat dari server UNESA, jadi memerlukan koneksi internet.</p>
+</section>
 
 <section class="pg pg-stack" id="page-stack" data-page="stack" hidden>
 <div class="app">
@@ -2978,11 +3049,32 @@ function scopedDoc(root) {
 
 (function () {
   "use strict";
-  var TITLES = {"home": "Dashboard", "stack": "Materi Stack", "stack-case": "Studi Kasus Stack", "queue": "Materi Queue", "queue-case": "Studi Kasus Queue", "linked": "Materi Single Linked List", "linked-case": "Studi Kasus Single Linked List", "double": "Materi Double Linked List", "double-case": "Studi Kasus Double Linked List", "circular": "Materi Circular Linked List", "circular-case": "Studi Kasus Circular Linked List", "rekursif": "Materi Rekursif", "rekursif-case": "Studi Kasus Rekursif", "tree": "Materi Tree", "tree-case": "Studi Kasus Tree"};
-  var CHIPS = {"home": "Praktikum Struktur Data", "stack": "Materi Stack", "stack-case": "Studi Kasus Stack", "queue": "Materi Queue", "queue-case": "Studi Kasus Queue", "linked": "Materi Single Linked List", "linked-case": "Studi Kasus Single Linked List", "double": "Materi Double Linked List", "double-case": "Studi Kasus Double Linked List", "circular": "Materi Circular Linked List", "circular-case": "Studi Kasus Circular Linked List", "rekursif": "Materi Rekursif", "rekursif-case": "Studi Kasus Rekursif", "tree": "Materi Tree", "tree-case": "Studi Kasus Tree"};
+  var TITLES = {"home": "Dashboard", "about": "About Me", "stack": "Materi Stack", "stack-case": "Studi Kasus Stack", "queue": "Materi Queue", "queue-case": "Studi Kasus Queue", "linked": "Materi Single Linked List", "linked-case": "Studi Kasus Single Linked List", "double": "Materi Double Linked List", "double-case": "Studi Kasus Double Linked List", "circular": "Materi Circular Linked List", "circular-case": "Studi Kasus Circular Linked List", "rekursif": "Materi Rekursif", "rekursif-case": "Studi Kasus Rekursif", "tree": "Materi Tree", "tree-case": "Studi Kasus Tree"};
+  var CHIPS = {"home": "Praktikum Struktur Data", "about": "About Me", "stack": "Materi Stack", "stack-case": "Studi Kasus Stack", "queue": "Materi Queue", "queue-case": "Studi Kasus Queue", "linked": "Materi Single Linked List", "linked-case": "Studi Kasus Single Linked List", "double": "Materi Double Linked List", "double-case": "Studi Kasus Double Linked List", "circular": "Materi Circular Linked List", "circular-case": "Studi Kasus Circular Linked List", "rekursif": "Materi Rekursif", "rekursif-case": "Studi Kasus Rekursif", "tree": "Materi Tree", "tree-case": "Studi Kasus Tree"};
   var chip = document.getElementById("dslChip");
   var views = document.querySelectorAll("[data-page]");
   var links = document.querySelectorAll("[data-route]");
+  var groups = document.querySelectorAll(".dgrp");
+  var side = document.querySelector(".dside");
+  var btn = document.getElementById("dsMenuBtn");
+
+  // Satu grup terbuka per tingkat; grup induk tidak ikut tertutup.
+  groups.forEach(function (g) {
+    g.addEventListener("toggle", function () {
+      if (!g.open) return;
+      Array.prototype.forEach.call(g.parentElement.children, function (o) {
+        if (o !== g && o.classList.contains("dgrp")) o.open = false;
+      });
+    });
+  });
+
+  // Tombol menu (layar sempit): buka/tutup daftar menu.
+  function setMenu(open) {
+    side.classList.toggle("is-open", open);
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    btn.setAttribute("aria-label", open ? "Tutup menu" : "Buka menu");
+  }
+  btn.addEventListener("click", function () { setMenu(!side.classList.contains("is-open")); });
 
   function route() {
     var h = decodeURIComponent(location.hash.replace(/^#/, ""));
@@ -2993,6 +3085,11 @@ function scopedDoc(root) {
       a.classList.toggle("is-active", on);
       if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
+    groups.forEach(function (g) { g.classList.toggle("has-active", !!g.querySelector("a.is-active")); });
+    var act = document.querySelector(".dgrp a.is-active");
+    if (act) { var d = act.closest("details"); while (d) { d.open = true; d = d.parentElement.closest("details"); } }
+    else groups.forEach(function (g) { g.open = false; }); // Dashboard / About Me: semua grup ditutup
+    setMenu(false);
     chip.textContent = CHIPS[key];
     document.title = TITLES[key] + " · DS-LAB";
     var anchor = !TITLES[h] && h ? document.getElementById(h) : null;
